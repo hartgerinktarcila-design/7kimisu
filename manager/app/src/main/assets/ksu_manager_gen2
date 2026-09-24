@@ -1,0 +1,14 @@
+7kimisu manager generation marker: gen 2
+
+这个文件是「管理器断代闸门」的世代标记，请勿删除、不要改名。
+This file is the manager generation marker for the KernelSU generation gate. Do not delete or rename it.
+
+内核在认主（把某个 APK 设成"管理器"）时，除了校验 APK 的 v2 签名，还会在包的
+中央目录里找一条名字形如 assets/ksu_manager_gen<N> 的条目：
+    N >= kernel/Kbuild 的 KSU_MANAGER_MIN_GEN（当前 = 2）才认主。
+老版本管理器 APK 的包里没有这条条目，所以在新内核上永远不会被认主
+（界面显示「未安装」，且它发不出带世代号的新 ioctl，关不掉隐身）。
+
+要"再断一代"：把这个文件改名为 ksu_manager_gen<N+1>，同时把
+kernel/Kbuild 的 KSU_MANAGER_MIN_GEN 与 manager/app/src/main/cpp/ksu.cc
+的 KSU_MANAGER_GEN 一起 +1，再同批发一版。

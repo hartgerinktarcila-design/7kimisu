@@ -1,0 +1,148 @@
+/* ══════════════════════════════════════════════════════════════════
+   7kimisu 网页管理器 — 配色（主题）
+   ──────────────────────────────────────────────────────────────────
+   每个主题只是给下面这组 CSS 变量换一套值，组件样式一律不写死颜色。
+
+   第三方配色来源与许可（原文见 /licenses/，随 APK 一起分发）：
+     · Catppuccin  Mocha / Latte  —— MIT  © 2021 Catppuccin
+     · Nord                        —— MIT  © 2016-present Sven Greb
+     · Dracula（+ Alucard 浅色）   —— MIT  © 2023 Dracula Theme
+   7kimisu 深色 / 浅色 为本项目自有配色。
+
+   用法：<html data-theme="mocha" data-scheme="dark">
+        data-theme: auto | 7k | mocha | latte | nord | dracula
+        data-scheme: dark | light   （auto 时由脚本按系统偏好设置）
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── 1. 7kimisu 深色（默认）── */
+:root,
+[data-theme="7k"][data-scheme="dark"] {
+  --bg:        #0b0f12;
+  --bg-soft:   #0f1418;
+  --card:      #151b21;
+  --card-2:    #1b232b;
+  --card-3:    #212b34;
+  --line:      #243039;
+  --line-soft: rgba(255, 255, 255, .06);
+  --fg:        #e6edf3;
+  --fg-dim:    #9fb0bd;
+  --fg-mute:   #6b7c89;
+  --accent:    #4c9aff;
+  --accent-fg: #06121f;
+  --ok:        #3ddc84;
+  --warn:      #ffb020;
+  --bad:       #ff5c5c;
+  --info:      #6ea8ff;
+  --on-strong: #ffffff;
+  --shadow:    0 10px 30px rgba(0, 0, 0, .45);
+}
+
+/* ── 2. 7kimisu 浅色 ── */
+[data-theme="7k"][data-scheme="light"] {
+  --bg:        #f4f6f8;
+  --bg-soft:   #eceff3;
+  --card:      #ffffff;
+  --card-2:    #f4f6f9;
+  --card-3:    #e9edf2;
+  --line:      #dde3ea;
+  --line-soft: rgba(0, 0, 0, .06);
+  --fg:        #16202a;
+  --fg-dim:    #56646f;
+  --fg-mute:   #8593a0;
+  --accent:    #1f6feb;
+  --accent-fg: #ffffff;
+  --ok:        #1a9e5c;
+  --warn:      #b26a00;
+  --bad:       #d5372f;
+  --info:      #1f6feb;
+  --on-strong: #ffffff;
+  --shadow:    0 10px 26px rgba(22, 32, 42, .12);
+}
+
+/* ── 3. Catppuccin Mocha（MIT）── */
+[data-theme="mocha"] {
+  --bg:        #1e1e2e;   /* base      */
+  --bg-soft:   #181825;   /* mantle    */
+  --card:      #252537;
+  --card-2:    #313244;   /* surface0  */
+  --card-3:    #3b3b52;
+  --line:      #45475a;   /* surface1  */
+  --line-soft: rgba(205, 214, 244, .08);
+  --fg:        #cdd6f4;   /* text      */
+  --fg-dim:    #bac2de;   /* subtext1  */
+  --fg-mute:   #7f849c;   /* overlay1  */
+  --accent:    #cba6f7;   /* mauve     */
+  --accent-fg: #1e1e2e;
+  --ok:        #a6e3a1;   /* green     */
+  --warn:      #f9e2af;   /* yellow    */
+  --bad:       #f38ba8;   /* red       */
+  --info:      #89b4fa;   /* blue      */
+  --on-strong: #1e1e2e;
+  --shadow:    0 10px 30px rgba(17, 17, 27, .5);
+}
+
+/* ── 4. Catppuccin Latte（MIT，浅色）── */
+[data-theme="latte"] {
+  --bg:        #eff1f5;   /* base     */
+  --bg-soft:   #e6e9ef;   /* mantle   */
+  --card:      #ffffff;
+  --card-2:    #e6e9ef;
+  --card-3:    #dce0e8;   /* crust    */
+  --line:      #ccd0da;   /* surface0 */
+  --line-soft: rgba(76, 79, 105, .08);
+  --fg:        #4c4f69;   /* text     */
+  --fg-dim:    #5c5f77;   /* subtext1 */
+  --fg-mute:   #8c8fa1;   /* overlay1 */
+  --accent:    #8839ef;   /* mauve    */
+  --accent-fg: #ffffff;
+  --ok:        #40a02b;   /* green    */
+  --warn:      #df8e1d;   /* yellow   */
+  --bad:       #d20f39;   /* red      */
+  --info:      #1e66f5;   /* blue     */
+  --on-strong: #ffffff;
+  --shadow:    0 10px 26px rgba(76, 79, 105, .14);
+}
+
+/* ── 5. Nord（MIT）── */
+[data-theme="nord"] {
+  --bg:        #2e3440;   /* nord0 */
+  --bg-soft:   #292e39;
+  --card:      #3b4252;   /* nord1 */
+  --card-2:    #434c5e;   /* nord2 */
+  --card-3:    #4c566a;   /* nord3 */
+  --line:      #4c566a;   /* nord3 */
+  --line-soft: rgba(216, 222, 233, .08);
+  --fg:        #eceff4;   /* nord6 */
+  --fg-dim:    #d8dee9;   /* nord4 */
+  --fg-mute:   #8f9bab;
+  --accent:    #88c0d0;   /* nord8 */
+  --accent-fg: #2e3440;
+  --ok:        #a3be8c;   /* nord14 */
+  --warn:      #ebcb8b;   /* nord13 */
+  --bad:       #bf616a;   /* nord11 */
+  --info:      #81a1c1;   /* nord9  */
+  --on-strong: #2e3440;
+  --shadow:    0 10px 30px rgba(20, 24, 31, .5);
+}
+
+/* ── 6. Dracula（MIT）── */
+[data-theme="dracula"] {
+  --bg:        #282a36;
+  --bg-soft:   #21222c;
+  --card:      #2f313f;
+  --card-2:    #383a4a;
+  --card-3:    #44475a;   /* current line */
+  --line:      #44475a;
+  --line-soft: rgba(248, 248, 242, .08);
+  --fg:        #f8f8f2;
+  --fg-dim:    #d7d7d2;
+  --fg-mute:   #6272a4;   /* comment */
+  --accent:    #bd93f9;   /* purple  */
+  --accent-fg: #282a36;
+  --ok:        #50fa7b;   /* green   */
+  --warn:      #f1fa8c;   /* yellow  */
+  --bad:       #ff5555;   /* red     */
+  --info:      #8be9fd;   /* cyan    */
+  --on-strong: #282a36;
+  --shadow:    0 10px 30px rgba(15, 16, 22, .5);
+}

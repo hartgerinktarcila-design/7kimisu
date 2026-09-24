@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="7k" data-scheme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#0b0f12">
+<meta name="referrer" content="no-referrer">
+<title>7kimisu 网页管理器</title>
+<link rel="icon" href="data:,">
+<!-- 资源都在同一个服务里（同源），页面不会访问任何外部地址 -->
+<link rel="stylesheet" href="__P__/a/themes.css">
+<link rel="stylesheet" href="__P__/a/app.css">
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="mark">
+      <svg class="ic ic-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>
+        <path d="m9 12 2 2 4-4"/>
+      </svg>
+    </div>
+    <div>
+      <h1>7kimisu</h1>
+      <div class="sub">网页管理器</div>
+    </div>
+  </div>
+  <div class="sp"></div>
+  <button class="icon-btn" id="theme" aria-label="配色">
+    <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+         stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 22a1 1 0 0 1 0-20 10 9 0 0 1 10 9 5 5 0 0 1-5 5h-2.25a1.75 1.75 0 0 0-1.4 2.8l.3.4a1.75 1.75 0 0 1-1.4 2.8z"/>
+      <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/>
+      <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/>
+      <circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/>
+      <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/>
+    </svg>
+  </button>
+  <button class="icon-btn" id="refresh" aria-label="刷新">
+    <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+         stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
+      <path d="M21 3v5h-5"/>
+      <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
+      <path d="M8 16H3v5"/>
+    </svg>
+  </button>
+</header>
+
+<nav>
+  <button data-tab="status" class="on">状态</button>
+  <button data-tab="users">超级用户</button>
+  <button data-tab="modules">模块</button>
+  <button data-tab="sulog">日志</button>
+  <button data-tab="about">关于</button>
+</nav>
+
+<main>
+  <section id="t-status" class="on"></section>
+  <section id="t-users">
+    <div id="user-toolbar"></div>
+    <div id="users"></div>
+  </section>
+  <section id="t-modules">
+    <div id="mod-toolbar"></div>
+    <div id="modules"></div>
+  </section>
+  <section id="t-sulog">
+    <div id="sulog-toolbar"></div>
+    <div id="sulog"></div>
+  </section>
+  <section id="t-about"></section>
+</main>
+
+<div id="mask"><div class="sheet" id="sheet"></div></div>
+<div id="toast"></div>
+
+<script src="__P__/a/app.js"></script>
+</body>
+</html>

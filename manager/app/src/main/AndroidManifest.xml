@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+
+
+    <uses-sdk tools:overrideLibrary="top.yukonga.miuix.kmp.blur" />
+
+    <application
+        android:name=".KernelSUApplication"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:directBootAware="true"
+        android:fullBackupContent="@xml/backup_rules"
+        android:hasFragileUserData="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.KernelSU"
+        android:zygotePreloadName="com.sevenk.core.magica.AppZygotePreload">
+        <activity
+            android:name=".ui.MainActivity"
+            android:exported="true"
+            android:theme="@style/Theme.KernelSU.Starting"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:mimeType="application/zip"
+                    android:scheme="content" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <!-- 2026-09-16：这里原本还有一个 BROWSABLE 分类，让浏览器/其它 App
+                     能通过 ksu://action 唤起本界面（原本用来做「隐身救援」）。
+                     用户要求删掉那个功能，所以去掉了 BROWSABLE —— 外部打不开了。
+                     ⚠️ 模块快捷方式不受影响：它们用的是显式 Intent
+                        (Intent(context, MainActivity::class.java))，不经过清单过滤器。 -->
+
+                <data
+                    android:host="action"
+                    android:scheme="ksu" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="webui"
+                    android:scheme="ksu" />
+            </intent-filter>
+        </activity>
+
+        <!--
+            桌面入口别名。
+            隐身模式(二级)通过禁用这个 alias 来隐藏桌面图标;
+            MainActivity 本身仍然可以启动(拨号盘密令 / 网页入口 / am start)。
+        -->
+        <activity-alias
+            android:name=".ui.LauncherAlias"
+            android:enabled="true"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/app_name"
+            android:targetActivity=".ui.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <!-- 拨号盘密令(可在设置里自定义) :关闭隐身并恢复桌面图标。
+             这里【故意只声明 scheme、不写 host】—— 按 intent filter 规则
+             "只声明 scheme 时,所有该 scheme 的 URI 都匹配",这样任何数字的密令
+             都会送到本 receiver,再由代码和设置里的数字比对,不匹配就静默忽略。 -->
+        <receiver
+            android:name=".ui.security.StealthReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.provider.Telephony.SECRET_CODE" />
+
+                <data android:scheme="android_secret_code" />
+            </intent-filter>
+        </receiver>
+
+        <!-- 开机后按内核状态重新同步桌面图标 -->
+        <receiver
+            android:name=".ui.security.StealthBootReceiver"
+            android:directBootAware="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <activity
+            android:name=".ui.webui.WebUIActivity"
+            android:autoRemoveFromRecents="true"
+            android:configChanges="density|orientation|screenSize|screenLayout|smallestScreenSize|uiMode|locale|layoutDirection|fontScale|keyboard|keyboardHidden"
+            android:documentLaunchMode="intoExisting"
+            android:exported="false"
+            android:taskAffinity="${applicationId}.webui"
+            android:theme="@style/Theme.KernelSU.WebUI" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepaths" />
+        </provider>
+
+        <service
+            android:name=".magica.MagicaService"
+            android:directBootAware="true"
+            android:exported="false"
+            android:isolatedProcess="true"
+            android:useAppZygote="true" />
+
+        <service
+            android:name=".ui.util.DownloadService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
+
+
+
+        <receiver
+            android:name=".magica.BootCompletedReceiver"
+            android:directBootAware="true"
+            android:enabled="false"
+            android:exported="true"
+            android:process=":magica_boot">
+            <intent-filter>
+                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.sevenk.core.magica.LAUNCH" />
+            </intent-filter>
+        </receiver>
+    </application>
+
+</manifest>

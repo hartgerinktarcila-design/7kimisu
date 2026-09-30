@@ -88,21 +88,29 @@ class StealthReceiver : BroadcastReceiver() {
      * （默认密令 70707 还是公开的），还会连带让本 App 起 root shell 去读密令。
      *
      * ## 判据（Android 14 / API 34 起才有发送方信息）
-     *   · 系统(1000) / 电话进程(1001) / 我们自己          → 放行
-     *   · uid < 10000（系统共享 uid 段，绝不可能是普通第三方 App） → 放行
-     *   · 其余(>=10000)：满足任一条即放行
-     *       ① 发送方就是本机**默认拨号器**（比对包名或 uid）
-     *       ② 发送方带 `FLAG_SYSTEM`（预装应用）—— 覆盖"拨号由厂商电话组件发"的 ROM，
-     *          免得识别不出拨号器反而把用户锁死在隐身里
+     *   · 系统(1000) / 电话进程(1001) / 我们自己            → 放行（这三个 uid 不可能是别的角色）
+     *   · 其余 uid：**必须能查出"包身份"**，且满足任一条才放行
+     *       ① 就是本机**默认拨号器**（包名对上）
+     *       ② 是**预装/系统应用**（`FLAG_SYSTEM`）—— 覆盖"拨号由厂商电话组件发"的 ROM
+     *   · 查不出包身份的（例如 **adb shell / `am broadcast`，uid 2000**）→ **拒绝**
      *   · 其它一律拒绝（静默忽略，只留一条不含密令的日志）
+     *
+     * ## ⚠️ 2026-09-27 修（朋友第二轮审计，他说得对）
+     * 上一版有一条「uid < 10000 一律放行」，本意是"系统共享 uid 段不可能是普通 App"——
+     * **但 adb shell 就是 uid 2000**，于是插着数据线的人一条
+     * `am broadcast -a android.provider.Telephony.SECRET_CODE -d android_secret_code://70707`
+     * 就能关掉隐身，等于白拦。现在改成**任何非 1000/1001/自己 的 uid 都要有系统级包身份**，
+     * adb 没有包身份 → 直接拒。（厂商拨号器是预装应用，仍走 ② 放行，不会把人锁死。）
      *
      * ## 拿不到发送方时为什么放行（fail-open）
      * API < 34 没有 `sentFromUid`。**"识别不出拨号器"而把密令拒掉 = 用户退不出隐身 = 锁死**，
      * 那是本项目最怕的事故（见 `StealthCodeStore.acceptedCodes` 的注释）。
-     * 所以老系统上退回旧行为，只在新系统上收紧。
+     * 所以老系统（Android 13 及以下）只能退回旧行为 —— 这是个已知的、改不了的缺口。
      *
-     * 注：这里挡不住「有 root / adb 的人用 `input keyevent` 模拟真人拨号」——
-     * 但那种人本来就能直接改内核里的隐身标志（`/data/adb/sevenk/stealth`），无需绕密令。
+     * ## 仍然挡不住的（如实记录）
+     * · 有 adb / root 的人用 `input` 模拟**真人拨号**：那次广播的发送方确实是电话进程(1001)，
+     *   与真人拨号无法区分 → 放行。代价也仅限"隐身被关"（**拿不到 root**）。
+     * · 有 root 的人本来就能直接改 `/data/adb/sevenk/stealth`，绕不绕密令没区别。
      */
     private fun senderTrusted(context: Context): Boolean {
         // API < 34：拿不到发送方信息，退回旧行为（宁可不加这层，也不能把人锁死）
@@ -111,28 +119,31 @@ class StealthReceiver : BroadcastReceiver() {
         val uid = runCatching { sentFromUidCompat() }.getOrDefault(-1)
         if (uid < 0) return true // 未知发送方 → 同上，放行
         if (uid == Process.SYSTEM_UID || uid == Process.PHONE_UID || uid == Process.myUid()) return true
-        if (uid < Process.FIRST_APPLICATION_UID) return true // 系统共享 uid 段
 
-        // >=10000：只信"拨号那一路"
-        //   ① 本机默认拨号器（比对包名或 uid）；或
-        //   ② 预装系统应用（FLAG_SYSTEM）—— 覆盖某些 ROM 里拨号由厂商电话组件发的机型，
-        //      免得"识别不出拨号器"反而把人锁死在隐身里。
-        //   普通用户安装的 App 一律不满足 ①② → 拒绝。
-        val sentPkg = runCatching { sentFromPackageCompat() }.getOrNull()
+        // 其余 uid：先查出它的"包身份"——
+        //   ① 官方给的发送方包名（API 34 的 sentFromPackage）
+        //   ② 反查这个 uid 名下的包（getPackagesForUid）
+        // adb shell(2000) / 其它无包身份的系统角色 → 两个都拿不到 → 拒绝。
+        val pkgs = LinkedHashSet<String>()
+        runCatching { sentFromPackageCompat() }.getOrNull()
+            ?.takeIf { it.isNotBlank() }?.let { pkgs.add(it) }
+        runCatching { context.packageManager.getPackagesForUid(uid) }
+            .getOrNull()?.forEach { pkgs.add(it) }
+        if (pkgs.isEmpty()) return false
+
+        // ① 本机默认拨号器
         val dialer = runCatching {
             context.getSystemService(TelecomManager::class.java)?.defaultDialerPackage
         }.getOrNull()
-        if (sentPkg != null && dialer != null && sentPkg == dialer) return true
-        if (dialer != null && runCatching {
-                context.packageManager.getApplicationInfo(dialer, 0).uid == uid
-            }.getOrDefault(false)
-        ) return true
-        if (sentPkg != null && runCatching {
-                val ai = context.packageManager.getApplicationInfo(sentPkg, 0)
+        if (dialer != null && pkgs.contains(dialer)) return true
+
+        // ② 预装/系统应用（覆盖厂商电话组件）
+        return pkgs.any { pkg ->
+            runCatching {
+                val ai = context.packageManager.getApplicationInfo(pkg, 0)
                 (ai.flags and android.content.pm.ApplicationInfo.FLAG_SYSTEM) != 0
             }.getOrDefault(false)
-        ) return true
-        return false
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)

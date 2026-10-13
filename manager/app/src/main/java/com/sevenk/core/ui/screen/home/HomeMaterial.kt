@@ -67,7 +67,6 @@ import com.sevenk.core.Natives
 import com.sevenk.core.R
 import com.sevenk.core.ui.component.WarningLevel
 import com.sevenk.core.ui.component.dialog.rememberConfirmDialog
-import com.sevenk.core.ui.component.dialog.rememberInfoDialog
 import com.sevenk.core.ui.component.material.ExpressiveScaffold
 import com.sevenk.core.ui.component.material.SegmentedColumn
 import com.sevenk.core.ui.component.material.SegmentedListItem
@@ -239,15 +238,9 @@ private fun StatusCard(
         val ksuActive = state.ksuVersion != null
         val notInstalled = !ksuActive && state.kernelVersion.isGKI()
 
-        // 「内核还没认主」的说明弹窗 —— 2026-09-16 修「点了没反应」时加的。
-        // 这个状态下管理器拿不到 root(见 kernel/supercall/perm.c 的 allowed_for_su_authed),
-        // 所以既不能替用户重启、也不能靠安装解决 —— 只能把道理讲清楚。
-        val notRecognizedDialog = rememberInfoDialog()
-        val notRecognizedTitle = stringResource(R.string.home_manager_not_recognized_title)
-        val notRecognizedDetail = stringResource(R.string.home_manager_not_recognized_detail)
-        // ⚠️ v0.13.157:原来这里还有一个 `stealthTapHint`(隐身专用的「暂时无法处理，请稍后再试」),
-        //    连它引用的字符串资源 [R.string.home_stealth_tap_hint] 一起删掉了
-        //    —— 隐身时点这一行现在和正常时一样,弹的就是上面这段原始说明。
+        // 2026-10-14 用户定：撤掉「内核未就绪」弹窗与状态文案。
+        // 没认主/没 root 时一律回落到原版「未安装 / 点击安装」——点了直接进安装页，
+        // 否则没 root 的用户连修补 init_boot 的入口都摸不到。
 
         val containerColor = if (ksuActive) {
             MaterialTheme.colorScheme.secondaryContainer
@@ -265,22 +258,18 @@ private fun StatusCard(
         val customStatusTitle = STATUS_CARD_TEXT
         val statusTitle = when {
             ksuActive -> customStatusTitle
-            // 装好了却写「未安装」是误导。有 root 时直接说「可以安装了」——把下一步摆在脸上。
-            notInstalled && state.managerNotRecognized ->
-                if (state.isRootAvailable) stringResource(R.string.home_can_install)
-                else notRecognizedTitle
+            // 有 root 但还没认主 → 这是「从别的管理器转过来」的人,该去安装
+            notInstalled && state.managerNotRecognized && state.isRootAvailable ->
+                stringResource(R.string.home_can_install)
             notInstalled -> stringResource(R.string.home_not_installed)
             else -> stringResource(R.string.home_unsupported)
         }
         val statusSummary = when {
             ksuActive -> stringResource(R.string.home_working_version, "${state.ksuVersion}-${state.kernelUAPIVersion}")
-            // 有 root 但没有我们的内核 → 这是「从别的管理器转过来」的人,该去安装。
-            // (本应用能不能拿到 root 是唯一可靠判据,见 kernel/supercall/perm.c)
+            // 有 root 但没有认主 → 直达安装
             notInstalled && state.managerNotRecognized && state.isRootAvailable ->
                 stringResource(R.string.home_can_install_summary)
-            // 没 root → 装不了,点一下会弹说明(重启 / 先去别的管理器授权)
-            notInstalled && state.managerNotRecognized ->
-                stringResource(R.string.home_manager_not_recognized)
+            // 2026-10-14 用户定：没 root 时也显示原版「点击安装」，别再弹说明挡路
             notInstalled -> stringResource(R.string.home_click_to_install)
             else -> stringResource(R.string.home_unsupported_reason)
         }
@@ -336,14 +325,6 @@ private fun StatusCard(
                     onClick = {
                         when {
                             state.isLateLoadMode -> Unit
-                            // 有 root → 直达安装页:授权 → 点一下 → 直接安装 → 重启
-                            state.managerNotRecognized && state.isRootAvailable ->
-                                actions.onInstallClick()
-                            // 没 root → 装不了,把两种情况讲清楚
-                            state.managerNotRecognized -> notRecognizedDialog.show(
-                                notRecognizedTitle,
-                                notRecognizedDetail,
-                            )
                             else -> actions.onInstallClick()
                         }
                     },

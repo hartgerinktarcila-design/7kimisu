@@ -77,30 +77,25 @@ data class HomeUiState(
 }
 
 /**
- * **隐身模式**下的首页伪装:把 [HomeUiState] 归一化成「内核未就绪」那一支。
+ * **隐身模式**下的首页伪装:把 [HomeUiState] 归一化成「未安装」那一支。
  *
- * 需求(2026-09-20 用户定):隐身开着时,首页要跟**「新 App 装在没刷内核的机器上」**
- * (即内核没认主:[managerNotRecognized] = true、且拿不到 root)看起来**一模一样** ——
- * 那副样子只有一句「内核未就绪 / 点一下看怎么处理」+ 机型信息,完全不像 root 管理器,
- * 比现在的「未安装 / 点击安装」自然得多。
+ * 隐身开着时,首页跟「没刷内核/没认主的机器」看起来一模一样 —— 状态卡显示
+ * 「未安装 / 点击安装」(原版 KernelSU 的标准样子),点一下进安装页,
+ * 安装页本身对没 root 的设备就只给「选文件修补」这条路,不露馅。
  *
- * 做法是**在 UiState 层面复用那条已存在的分支**(Miuix / Material 两套界面都自动生效),
+ * (2026-10-14 调整:早期版本曾伪装成「内核未就绪」并弹说明窗 —— 那个写法会把
+ *  没 root 的用户挡在修补入口外,已按用户要求撤回原版行为。)
+ *
+ * 做法是**在 UiState 层面归一化**(Miuix / Material 两套界面都自动生效),
  * 不新画任何 UI —— 少一套 UI 就少一个将来会漏馅的地方:
- *   - [managerNotRecognized] = true + [isRootAvailable] = false
- *     → 首页状态卡的 `notInstalled && managerNotRecognized && !isRootAvailable` 分支
- *       自动变成「内核未就绪」,标题 / 副标题 / 图标全是现成资源;
+ *   - [managerNotRecognized] = true + [isRootAvailable] = false;
  *   - 清掉所有"其实认主了 / 其实有 root / 其实是 LKM"的字段,
  *     否则会漏出绿卡、「安装 / 更新内核」卡、更新卡、GKI 警告卡。
  *
  * ⚠️ **不动 [isManager]**:那是内核给的**真实**值(隐身时本来就是 false),
  *    底栏 / 导航 / 闸门 / 数据迁移都靠它,这里一个字都不许改。
- * ⚠️ 这里只做**内容侧**归一化(显示"内核未就绪"这一支),**外观侧一个字都不动** ——
+ * ⚠️ 这里只做**内容侧**归一化,**外观侧一个字都不动** ——
  *    壁纸 / 透明度 / 动画 / 字体 / 配色 / 扁平化在隐身时全部照常(见 `security/Stealth.kt` 顶部注释)。
- *
- * ✅ 2026-09-21(v0.13.157):点击行为**不再单独堵** —— v0.13.156 曾在 `HomeMiuix.kt` /
- *    `HomeMaterial.kt` 里插一个 `stealthOn ->` 首选分支,只弹一句「暂时无法处理,请稍后再试」,
- *    已撤。用户判据:点「内核未就绪」弹出的那段原始说明(提到 KernelSU / APatch / 面具 / 刷内核),
- *    **正是一个没有 root 的用户点进去会看到的东西** —— 隐身时照常弹它才对。
  */
 fun HomeUiState.asStealthKernelNotReady(): HomeUiState = copy(
     ksuVersion = null,

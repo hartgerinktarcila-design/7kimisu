@@ -99,7 +99,7 @@ class HomeViewModel(
         val stealthState = runCatching { Natives.stealthState() }.getOrDefault(-1)
         val managerNotRecognized = !isManager && stealthState != 1
         // 隐身模式(内核 stealthState == 1):内核其实仍然认我们,只是不上报 MANAGER 标志。
-        // 界面要把首页伪装成「内核未就绪」那一支(详见 HomeUiState.asStealthKernelNotReady)。
+        // 界面要把首页伪装成「未安装」那一支(详见 HomeUiState.asStealthKernelNotReady)。
         val stealthOn = stealthState == 1
         val ksuVersionRaw = runCatching { Natives.version }.getOrDefault(-1)
         val kernelUapiRaw = runCatching { Natives.kernelUAPIVersion }.getOrDefault(0)
@@ -160,7 +160,7 @@ class HomeViewModel(
             ),
         )
 
-        // 🔒 隐身:把整个状态归一化成「内核未就绪」那一支(照抄没刷内核时首页的样子)。
+        // 🔒 隐身:把整个状态归一化成「未安装」那一支(照抄没刷内核时首页的样子)。
         //    界面层一行不用改就会走进那条已存在的分支(见 HomeUiState.asStealthKernelNotReady)。
         //    顺手把"更新检查"也关掉 —— 状态里 checkUpdateEnabled 为 false 时
         //    refresh() 不会再联网查版本,伪装期少一条痕迹。

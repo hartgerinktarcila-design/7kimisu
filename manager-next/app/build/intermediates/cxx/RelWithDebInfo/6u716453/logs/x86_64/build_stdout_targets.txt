@@ -1,2 +1,3 @@
 ninja: Entering directory `/Users/7kimimasy/7kimisu/manager-next/app/.cxx/RelWithDebInfo/6u716453/x86_64'
-ninja: no work to do.
+[1/2] Linking CXX shared library /Users/7kimimasy/7kimisu/manager-next/app/build/intermediates/cxx/RelWithDebInfo/6u716453/obj/x86_64/libsevenk.so
+[2/2] Linking CXX shared library /Users/7kimimasy/7kimisu/manager-next/app/build/intermediates/cxx/RelWithDebInfo/6u716453/obj/x86_64/libadbroot.so

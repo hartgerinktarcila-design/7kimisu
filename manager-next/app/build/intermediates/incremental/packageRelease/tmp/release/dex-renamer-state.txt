@@ -1,4 +1,4 @@
-#Wed Oct 14 01:59:08 CST 2026
+#Wed Oct 14 02:19:54 CST 2026
 base.0=/Users/7kimimasy/7kimisu/manager-next/app/build/intermediates/dex/release/minifyReleaseWithR8/classes.dex
 path.0=classes.dex
 renamed.0=classes.dex

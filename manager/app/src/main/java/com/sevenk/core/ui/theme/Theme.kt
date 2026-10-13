@@ -172,3 +172,5 @@ val LocalImmersiveBars = staticCompositionLocalOf { false }
  * 见 util/BlurExt.kt 的 BlurredBar / miuixBarColor 与 component/bottombar/BottomBarMiuix.kt。
  */
 val LocalFlatUi = staticCompositionLocalOf { false }
+
+val LocalModuleDescriptionMaxLines = staticCompositionLocalOf { 4 }

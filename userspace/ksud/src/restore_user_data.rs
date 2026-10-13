@@ -407,15 +407,13 @@ fn tmp_sibling(dst: &Path) -> PathBuf {
     // （并发请求 / 同一进程内串行复用同一个 pid 的不同目标同名文件）会算出同一个临时名 ⇒
     // 后一次 `fs::copy` 截断前一次写到一半的临时文件 ⇒ rename 上去的是坏数据。
     // 与 `webadmin.rs::upload_path` 同一个坑，同一个修法。
-    let uniq = crate::webadmin::random_hex(8)
-        .unwrap_or_else(|| std::time::SystemTime::now()
+    let uniq = crate::webadmin::random_hex(8).unwrap_or_else(|| {
+        std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
             .map_or(0, |d| d.as_nanos())
-            .to_string());
-    dst.with_file_name(format!(
-        "{name}.restore-tmp-{}-{uniq}",
-        std::process::id()
-    ))
+            .to_string()
+    });
+    dst.with_file_name(format!("{name}.restore-tmp-{}-{uniq}", std::process::id()))
 }
 
 #[cfg(test)]

@@ -1,3 +1,4 @@
+#include "util.h"
 #include <linux/err.h>
 #include <linux/fs.h>
 #include <linux/gfp.h>
@@ -154,14 +155,11 @@ static __always_inline bool check_v2_signature(char *path, unsigned expected_siz
     int v2_signing_blocks = 0;
 
     int i;
-    struct file *fp = filp_open(path, O_RDONLY, 0);
+    struct file *fp = ksu_filp_open_nonotify(path, O_RDONLY | O_NOATIME);
     if (IS_ERR(fp)) {
         pr_err("open %s error.\n", path);
         return false;
     }
-
-    // disable inotify for this file
-    fp->f_mode |= FMODE_NONOTIFY;
 
     file_size = generic_file_llseek(fp, 0, SEEK_END);
     if (file_size < 0)
@@ -511,6 +509,7 @@ module_param_cb(ksu_debug_manager_appid, &expected_size_ops, &ksu_debug_manager_
 
 #endif
 
+// /data/app/XXXXX/<PACKAGE_NAME>-YYY/base.apk，从倒数第二段取包名（7kimisu 认主用）
 int get_pkg_from_apk_path(char *pkg, const char *path)
 {
     int len = strlen(path);
@@ -545,6 +544,32 @@ int get_pkg_from_apk_path(char *pkg, const char *path)
 
     // Copying the package name
     memcpy(pkg, second_last_slash + 1, pkg_len);
+    pkg[pkg_len] = '\0';
+
+    return 0;
+}
+
+// /data/app/XXXXX/<PACKAGE_NAME>-YYY, which contains base.apk
+int get_pkg_from_apk_dir_path(char *pkg, const char *path)
+{
+    int len = strlen(path);
+    if (len >= KSU_MAX_PACKAGE_NAME || len < 1)
+        return -1;
+
+    const char *last_slash = strrchr(path, '/');
+    if (!last_slash)
+        return -1;
+
+    const char *last_hyphen = strchr(last_slash, '-');
+    if (!last_hyphen)
+        return -1;
+
+    int pkg_len = last_hyphen - last_slash - 1;
+    if (pkg_len >= KSU_MAX_PACKAGE_NAME || pkg_len <= 0)
+        return -1;
+
+    // Copying the package name
+    memcpy(pkg, last_slash + 1, pkg_len);
     pkg[pkg_len] = '\0';
 
     return 0;

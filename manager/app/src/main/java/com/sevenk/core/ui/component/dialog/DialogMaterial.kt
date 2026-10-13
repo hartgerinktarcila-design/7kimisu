@@ -18,6 +18,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.sevenk.core.ui.component.markdown.MarkdownContent
 import com.sevenk.core.ui.component.material.ExpressiveDialog
 import com.sevenk.core.ui.theme.materialDialogColor
+import me.weishu.kernelsu.data.registry.RegistryUrls
 
 @Composable
 fun LoadingDialogMaterial(
@@ -64,8 +65,13 @@ fun ConfirmDialogMaterial(
             text = visuals.content?.let { content ->
                 {
                     when {
+                        // Registry content (and any HTML, which only comes from the registry) is rendered locked down.
+                        visuals.isRestricted || visuals.isHtml -> MarkdownContent(
+                            content = content,
+                            isMarkdown = !visuals.isHtml,
+                            restrictedBaseUrl = RegistryUrls.DEFAULT_BASE_URL,
+                        )
                         visuals.isMarkdown -> MarkdownContent(content = content, isMarkdown = true)
-                        visuals.isHtml -> MarkdownContent(content = content, isMarkdown = false)
                         else -> Text(text = content)
                     }
                 }

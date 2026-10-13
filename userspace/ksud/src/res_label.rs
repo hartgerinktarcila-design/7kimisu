@@ -103,7 +103,9 @@ impl StringPool {
     }
 
     fn get(&self, idx: usize) -> Option<String> {
-        let off = self.strings_start.checked_add(*self.offsets.get(idx)? as usize)?;
+        let off = self
+            .strings_start
+            .checked_add(*self.offsets.get(idx)? as usize)?;
         let s = self.data.get(off..)?;
         if self.utf8 {
             // UTF-8：先是"字符数"，再是"字节数"，各自可能是 1 或 2 字节（高位标记）
@@ -190,9 +192,7 @@ fn xml_label(xml: &[u8]) -> Option<(Option<String>, Option<u32>)> {
                 let Some(pool) = pool.as_ref() else { continue };
                 // ResXMLTree_node(16) + attrExt：ns, name, attributeStart, attributeSize, count, …
                 let name_idx = u32le(chunk, 20)? as usize;
-                let is_application = pool
-                    .get(name_idx)
-                    .is_some_and(|n| n == "application");
+                let is_application = pool.get(name_idx).is_some_and(|n| n == "application");
                 if !is_application {
                     continue;
                 }
@@ -339,7 +339,11 @@ fn arsc_string(arsc: &[u8], res_id: u32, locale: &(String, String)) -> Option<St
                         if raw == 0xffff { None } else { Some(raw * 4) }
                     } else {
                         let o = u32le(tchunk, type_header_size + want_entry * 4)?;
-                        if o == 0xffff_ffff { None } else { Some(o as usize) }
+                        if o == 0xffff_ffff {
+                            None
+                        } else {
+                            Some(o as usize)
+                        }
                     };
                     let Some(rel) = entry_off else { continue };
                     let e = entries_start + rel;
@@ -501,7 +505,6 @@ pub fn label_from_apk(apk: &Path) -> Option<String> {
     arsc_string(&arsc, res_id, &device_locale()).filter(|s| !s.trim().is_empty())
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -566,9 +569,7 @@ mod tests {
         assert!(xml_label(&[]).is_none());
         assert!(xml_label(&[0xff; 32]).is_none());
         assert!(arsc_string(&[], 0x7f01_0001, &(String::new(), String::new())).is_none());
-        assert!(
-            arsc_string(&[0xff; 64], 0x7f01_0001, &(String::new(), String::new())).is_none()
-        );
+        assert!(arsc_string(&[0xff; 64], 0x7f01_0001, &(String::new(), String::new())).is_none());
         assert!(StringPool::parse(&[0u8; 8]).is_none());
     }
 
@@ -650,10 +651,17 @@ mod diag_tests {
                 continue;
             }
             let hs = u16le(chunk, 2).unwrap() as usize;
-            println!("  包 chunk 大小={} headerSize={hs}（typeStrings={} keyStrings={}）",
-                chunk.len(), u32le(chunk, 268).unwrap_or(0), u32le(chunk, 276).unwrap_or(0));
+            println!(
+                "  包 chunk 大小={} headerSize={hs}（typeStrings={} keyStrings={}）",
+                chunk.len(),
+                u32le(chunk, 268).unwrap_or(0),
+                u32le(chunk, 276).unwrap_or(0)
+            );
             for (pt, po, ps) in chunks(chunk, hs, chunk.len()) {
-                println!("    内部 chunk type=0x{pt:04x} off={po} size={ps} id={:?}", chunk.get(po + 8).copied());
+                println!(
+                    "    内部 chunk type=0x{pt:04x} off={po} size={ps} id={:?}",
+                    chunk.get(po + 8).copied()
+                );
                 if pt != RES_TABLE_TYPE_TYPE {
                     continue;
                 }

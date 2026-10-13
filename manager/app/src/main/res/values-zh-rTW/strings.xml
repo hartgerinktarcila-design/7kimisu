@@ -112,6 +112,12 @@
     <string name="open">開啟</string>
     <string name="settings_check_update">檢查更新</string>
     <string name="settings_check_update_summary">開啟本應用程式時，自動檢查更新</string>
+    <string name="settings_enable_swipe_dismiss">橫移返回手勢</string>
+    <string name="settings_enable_swipe_dismiss_summary">從螢幕邊緣橫移返回上一頁</string>
+    <string name="settings_pager_gesture_mode">頁面切換手勢</string>
+    <string name="settings_pager_gesture_native">預設</string>
+    <string name="settings_pager_gesture_cross_axis">跨軸攔截</string>
+    <string name="settings_pager_gesture_ios_like">iOS 風格</string>
     <string name="select_file">選擇並修補檔案</string>
     <string name="download_file">下載並修補檔案</string>
     <string name="download_dialog_title">輸入連結</string>
@@ -155,7 +161,6 @@
     <string name="module_repos">模組倉庫</string>
     <string name="module_repos_source_code">源碼</string>
     <string name="module_repos_sort_updated">更新時間</string>
-    <string name="module_repos_sort_created">建立時間</string>
     <string name="module_repos_sort_name">名稱</string>
     <string name="module_repos_sort_stars">星標數</string>
     <string name="undo">撤銷</string>

@@ -167,7 +167,9 @@ pub fn load_config(module_id: &str, config_type: ConfigType) -> Result<HashMap<S
             .with_context(|| format!("Failed to read key length for entry {i}"))?;
         let key_len = u32::from_le_bytes(key_len_buf) as usize;
         if key_len > MAX_CONFIG_KEY_LEN {
-            bail!("Config key length too large for entry {i}: {key_len} (max: {MAX_CONFIG_KEY_LEN})");
+            bail!(
+                "Config key length too large for entry {i}: {key_len} (max: {MAX_CONFIG_KEY_LEN})"
+            );
         }
 
         // Read key data

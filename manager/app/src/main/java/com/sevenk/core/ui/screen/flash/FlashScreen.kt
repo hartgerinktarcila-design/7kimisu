@@ -3,6 +3,7 @@ package com.sevenk.core.ui.screen.flash
 import android.widget.Toast
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -12,6 +13,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.dropUnlessResumed
+import androidx.navigationevent.NavigationEventInfo
+import androidx.navigationevent.compose.NavigationBackHandler
+import androidx.navigationevent.compose.rememberNavigationEventState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -24,7 +28,7 @@ import com.sevenk.core.ui.navigation3.LocalNavigator
 import com.sevenk.core.ui.util.reboot
 
 @Composable
-fun FlashScreen(flashIt: FlashIt) {
+fun FlashScreen(flashIt: FlashIt, onBackEnabledChange: (Boolean) -> Unit) {
     val navigator = LocalNavigator.current
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -38,6 +42,14 @@ fun FlashScreen(flashIt: FlashIt) {
     var flashingEnabled by rememberSaveable { mutableStateOf(!needJailbreakWarning) }
     val uiMode = LocalUiMode.current
     val snackbarHost = remember { SnackbarHostState() }
+    val backEnabled = flashingStatus != FlashingStatus.FLASHING
+
+    SideEffect { onBackEnabledChange(backEnabled) }
+    NavigationBackHandler(
+        state = rememberNavigationEventState(NavigationEventInfo.None),
+        isBackEnabled = !backEnabled,
+        onBackCompleted = {},
+    )
 
     fun showMessage(message: String) {
         scope.launch {
@@ -67,7 +79,7 @@ fun FlashScreen(flashIt: FlashIt) {
         rebootLabelRes = if (softReboot) R.string.reboot_soft else R.string.reboot,
     )
     val actions = FlashScreenActions(
-        onBack = dropUnlessResumed { navigator.pop() },
+        onBack = dropUnlessResumed { if (backEnabled) navigator.pop() },
         // 🟠（v2.19）失败文案在组合期取好（saveLog 不是 @Composable，只能传字符串进去）
         onSaveLog = saveLog(logContent, scope, stringResource(R.string.log_save_failed)) { showMessage(it) },
         onReboot = {

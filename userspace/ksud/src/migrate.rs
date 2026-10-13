@@ -1491,8 +1491,7 @@ fn remove_our_symlink_checked(legacy: &Path, new: &Path) -> CompatLinkRemoval {
         // `rename` 失败是原子的：原路径一个字节都没动
         return CompatLinkRemoval::Failed(format!("挪到隔离名失败（未删任何东西）：{e}"));
     }
-    let still_ours = fs::symlink_metadata(&quarantine)
-        .is_ok_and(|m| m.file_type().is_symlink())
+    let still_ours = fs::symlink_metadata(&quarantine).is_ok_and(|m| m.file_type().is_symlink())
         && fs::read_link(&quarantine).is_ok_and(|t| same_dir_target(&t, new));
     if !still_ours {
         return match fs::rename(&quarantine, legacy) {
@@ -3850,7 +3849,6 @@ mod tests {
         assert_eq!(rd(&old.join("stealth")), b"1", "旧目录一个字节没动");
     }
 
-
     // ── 关键文件判定（🔴B）──
 
     #[test]
@@ -4891,7 +4889,10 @@ mod tests {
             "旧写法在 (Err, Err) 时确实判'相同' —— 这就是这个 bug 的本体"
         );
         // 修后：三种"读失败"组合一律不同（不确定 ⇒ 不复用备份 ⇒ 绝不 remove_dir_all）
-        assert!(!symlink_targets_equal(err(), err()), "(Err, Err) 不得判相同");
+        assert!(
+            !symlink_targets_equal(err(), err()),
+            "(Err, Err) 不得判相同"
+        );
         assert!(
             !symlink_targets_equal(ok("/data/adb/sevenk"), err()),
             "(Ok, Err) 不得判相同"
@@ -4916,7 +4917,10 @@ mod tests {
             write_file(&d.join("same"), b"hello");
             std::os::unix::fs::symlink(&target, d.join("link")).unwrap();
         }
-        assert!(trees_equal(&a, &b), "软链目标相同 + 普通文件相同 ⇒ 必须判相同");
+        assert!(
+            trees_equal(&a, &b),
+            "软链目标相同 + 普通文件相同 ⇒ 必须判相同"
+        );
 
         // 目标不同 ⇒ 判不同（这条旧代码本来就对，留作回归）
         let other = t.path().join("other");
@@ -5922,7 +5926,10 @@ mod tests {
         // 软链（哪怕是悬空软链）也必须 lstat 得到 Some —— 本函数不跟随软链
         let link = t.path().join("link");
         std::os::unix::fs::symlink(t.path().join("does-not-exist"), &link).unwrap();
-        assert!(matches!(lstat_or_gone(&link), Ok(Some(_))), "悬空软链也要 Some");
+        assert!(
+            matches!(lstat_or_gone(&link), Ok(Some(_))),
+            "悬空软链也要 Some"
+        );
     }
 
     /// 🔴2a：`--force` 清冲突标记，**删不掉必须报错**。

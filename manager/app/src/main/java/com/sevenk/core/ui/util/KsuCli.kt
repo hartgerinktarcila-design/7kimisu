@@ -25,6 +25,9 @@ import com.sevenk.core.core.tasks.ProbeResult
 import com.sevenk.core.core.utils.DataSourceChannel
 import com.sevenk.core.ksuApp
 import com.sevenk.core.ui.security.Stealth
+import me.weishu.kernelsu.data.registry.DownloadVerificationException
+import me.weishu.kernelsu.data.registry.RegistryDownloadStore
+import me.weishu.kernelsu.data.registry.copyForInstall
 import okhttp3.OkHttpClient
 import org.json.JSONArray
 import java.io.File
@@ -386,10 +389,15 @@ suspend fun getFeatureStatus(feature: String): String = withContext(Dispatchers.
         ?: if (sigsysKilled) "unsupported" else "unknown"
 }
 
-suspend fun getFeaturePersistValue(feature: String): Long? = withContext(Dispatchers.IO) {
+suspend fun getFeaturePersistValue(feature: String): Long? = readFeatureValue("--config $feature")
+
+// 内核里的当前生效值（区别于 --config 读出来的持久化值）
+suspend fun getFeatureValue(feature: String): Long? = readFeatureValue(feature)
+
+private suspend fun readFeatureValue(args: String): Long? = withContext(Dispatchers.IO) {
     val shell = getRootShell()
     val out = shell.newJob()
-        .add("${getKsuDaemonPath()} feature get --config $feature").to(ArrayList<String>(), null).exec().out
+        .add("${getKsuDaemonPath()} feature get $args").to(ArrayList<String>(), null).exec().out
     val valueLine = out.firstOrNull { it.trim().startsWith("Value:") } ?: return@withContext null
     valueLine.substringAfter("Value:").trim().toLongOrNull()
 }
@@ -514,18 +522,28 @@ fun flashModule(
     onStdout: (String) -> Unit,
     onStderr: (String) -> Unit
 ): FlashResult {
-    val resolver = ksuApp.contentResolver
-    val file = File(ksuApp.cacheDir, "module.zip")
+    // Registry 下载的包存在 App 私有目录、自带期望的 size + SHA-256；
+    // 交给 ksud 的那一份在安装前一刻重新校验哈希。
+    val storeRoot = File(ksuApp.filesDir, RegistryDownloadStore.DIR_NAME)
+    val expected = if (uri.scheme == ContentResolver.SCHEME_FILE) {
+        uri.path?.let { RegistryDownloadStore.expectedFor(storeRoot, File(it)) }
+    } else {
+        null
+    }
+    val file = File.createTempFile("module-", ".zip", ksuApp.cacheDir)
     try {
-        // 🟡（v2.18）**流打不开/写出空文件就明确失败**。旧写法 `this?.copyTo(output)` 在
-        // `openInputStream` 返回 null 时静默跳过，却照样拿 0 字节的 `module.zip` 去
-        // `ksud module install`（用户看到的报错与真因无关）；而且 `file.delete()` 写在
-        // 正常路径末尾，异常时根本不会执行，残包留在 cache 里。
-        val input = resolver.openInputStream(uri)
-            ?: return FlashResult(-1, "打不开这个模块包（权限或格式问题）", false)
-        input.use { ins -> file.outputStream().use { outs -> ins.copyTo(outs) } }
-        if (file.length() <= 0L) {
-            return FlashResult(-1, "模块包是空的（复制失败）", false)
+        try {
+            val input = ksuApp.contentResolver.openInputStream(uri) ?: throw IOException("Cannot open $uri")
+            input.use { copyForInstall(it, file, expected) }
+        } catch (e: IOException) {
+            Log.w("KernelSU", "module $uri not installed: ${e.message}")
+            if (e is DownloadVerificationException) {
+                // 下载后被改坏/篡改过：绝不留着等重试。
+                uri.path?.let { RegistryDownloadStore.delete(storeRoot, File(it)) }
+            }
+            val message = "! ${e.message ?: "Failed to read module"}"
+            onStderr(message)
+            return FlashResult(1, message, false)
         }
         val cmd = "module install ${file.absolutePath}"
         val result = flashWithIO("${getKsuDaemonPath()} $cmd", onStdout, onStderr)
@@ -610,14 +628,40 @@ private fun writeLkmFile(lkm: LkmSelection): File? {
     return file
 }
 
+// ksud 的 --block-module 解析器接受的单个模块名。
+private fun isValidBlockModuleName(name: String): Boolean =
+    name.isNotEmpty() && name.length <= 64 &&
+        name.all { it in 'a'..'z' || it in 'A'..'Z' || it in '0'..'9' || it == '_' }
+
+/** 把黑名单输入框里逗号分隔的内容解析成非空模块名列表。 */
+fun parseBlockModules(input: String): List<String> =
+    input.split(',').map { it.trim() }.filter { it.isNotEmpty() }
+
+// 内核把 block_modules= 的值拷进 256 字节缓冲区（可用 255 字节）；
+// 更长的列表会被静默截断、部分模块没被拦。这里同样拒掉。
+private const val MAX_BLOCK_MODULES_LEN = 255
+
+/** 黑名单里的每个名字都合法才算合法（空串合法 = 不拦任何模块）。 */
+fun isBlockModulesValid(input: String): Boolean {
+    val names = parseBlockModules(input)
+    return names.all(::isValidBlockModuleName) &&
+        names.joinToString(",").length <= MAX_BLOCK_MODULES_LEN
+}
+
 private fun bootPatchFlags(
     allowShell: Boolean,
     enableAdb: Boolean,
     forceBackup: Boolean,
+    blockModules: String,
 ): String = buildString {
     if (allowShell) append(" --allow-shell")
     if (enableAdb) append(" --enable-adbd")
     if (forceBackup) append(" --backup")
+    // 名字在 UI 侧已校验过；这里原样透传。若有漏网之鱼，整个旗标都丢掉（绝不注入）。
+    val names = parseBlockModules(blockModules)
+    if (names.isNotEmpty() && names.all(::isValidBlockModuleName)) {
+        append(" --block-module ${names.joinToString(",")}")
+    }
 }
 
 fun installBoot(
@@ -628,6 +672,7 @@ fun installBoot(
     allowShell: Boolean,
     enableAdb: Boolean,
     forceBackup: Boolean,
+    blockModules: String,
     onStdout: (String) -> Unit,
     onStderr: (String) -> Unit,
 ): FlashResult {
@@ -655,7 +700,7 @@ fun installBoot(
     } else {
         " -b ${bootFile.absolutePath}"
     }
-    cmd += bootPatchFlags(allowShell, enableAdb, forceBackup)
+    cmd += bootPatchFlags(allowShell, enableAdb, forceBackup, blockModules)
 
     if (ota) {
         cmd += " -u"
@@ -704,6 +749,7 @@ fun downloadBoot(
     allowShell: Boolean,
     enableAdb: Boolean,
     forceBackup: Boolean,
+    blockModules: String,
     onStdout: (String) -> Unit,
     onStderr: (String) -> Unit,
 ): FlashResult {
@@ -765,7 +811,7 @@ fun downloadBoot(
     }
 
     var cmd = "${getKsuDaemonPath()} boot-patch -b ${bootFile.absolutePath}"
-    cmd += bootPatchFlags(allowShell, enableAdb, forceBackup)
+    cmd += bootPatchFlags(allowShell, enableAdb, forceBackup, blockModules)
 
     val lkmFile = writeLkmFile(lkm)
     if (lkmFile != null) {
@@ -927,6 +973,20 @@ suspend fun getAvailablePartitions(): List<String> = withContext(Dispatchers.IO)
     val cmd = "boot-info available-partitions"
     val out = shell.newJob().add("${getKsuDaemonPath()} $cmd").to(ArrayList(), null).exec().out
     out.filter { it.isNotBlank() }.map { it.trim() }
+}
+
+// 已知的厂商反 root 内核模块 —— `--block-module` 就是为它们准备的。
+private val KNOWN_BLOCKABLE_MODULES = listOf(
+    "vr", "vklp", "oplus_secure_guard", "oplus_secure_guard_new", "mkp"
+)
+
+// 返回本机 /proc/modules 里实际加载着的已知反 root 模块，
+// 安装页据此预填黑名单（只预填真实存在的那些）。
+suspend fun getLoadedBlockableModules(): List<String> = withContext(Dispatchers.IO) {
+    val shell = getRootShell()
+    val out = shell.newJob().add("cat /proc/modules").to(ArrayList(), null).exec().out
+    val loaded = out.mapNotNull { it.trim().substringBefore(' ').takeIf(String::isNotBlank) }.toHashSet()
+    KNOWN_BLOCKABLE_MODULES.filter { it in loaded }
 }
 
 fun hasMagisk(): Boolean {

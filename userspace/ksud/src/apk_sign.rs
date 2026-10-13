@@ -28,7 +28,7 @@ pub fn get_apk_signature(apk: &str) -> Result<(u32, String)> {
             }
         }
 
-        ensure!(n != 0xffff, "not a zip file");
+        ensure!(i < 0xffff, "not a zip file");
 
         i += 1;
     }
@@ -55,9 +55,9 @@ pub fn get_apk_signature(apk: &str) -> Result<(u32, String)> {
     let block_end = u64::from_le_bytes(size8)
         .checked_add(0x8)
         .ok_or_else(|| anyhow::anyhow!("APK sig block size overflows u64"))?;
-    let pos = cd_offset
-        .checked_sub(block_end)
-        .ok_or_else(|| anyhow::anyhow!("APK sig block is larger than the central directory offset"))?;
+    let pos = cd_offset.checked_sub(block_end).ok_or_else(|| {
+        anyhow::anyhow!("APK sig block is larger than the central directory offset")
+    })?;
     f.seek(SeekFrom::Start(pos))?;
     f.read_exact(&mut size_of_block)?;
 

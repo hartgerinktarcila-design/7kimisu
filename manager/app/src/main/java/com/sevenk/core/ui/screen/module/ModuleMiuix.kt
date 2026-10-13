@@ -11,8 +11,6 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandHorizontally
@@ -94,7 +92,6 @@ import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -116,6 +113,7 @@ import com.sevenk.core.ui.component.miuix.SearchBarFake
 import com.sevenk.core.ui.component.miuix.SearchBox
 import com.sevenk.core.ui.component.miuix.SearchPager
 import com.sevenk.core.ui.theme.LocalEnableBlur
+import com.sevenk.core.ui.theme.LocalModuleDescriptionMaxLines
 import com.sevenk.core.ui.theme.isInDarkTheme
 import com.sevenk.core.ui.theme.miuixDialogColor
 import com.sevenk.core.ui.util.BlurredBar
@@ -237,6 +235,7 @@ fun ModulePagerMiuix(
                 html = it.html,
                 confirm = it.confirm,
                 dismiss = it.dismiss,
+                restricted = it.restricted,
             )
         }
     }
@@ -800,6 +799,7 @@ fun ModuleItem(
     val hasUpdate = updateUrl.isNotEmpty()
     val textDecoration = if (module.remove) TextDecoration.LineThrough else null
     val hasDescription = module.description.isNotBlank()
+    val maxLinesLimit = LocalModuleDescriptionMaxLines.current
     var expanded by rememberSaveable(module.id) { mutableStateOf(false) }
 
     // ── 「卡面」:这个模块自己的卡片背景图 ──
@@ -841,9 +841,9 @@ fun ModuleItem(
         } else {
             CardDefaults.defaultColors()
         },
-        onClick = {
-            if (hasDescription) expanded = !expanded
-        }
+        onClick = if (hasDescription) {
+            { expanded = !expanded }
+        } else null
     ) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(10.dp),
@@ -934,25 +934,17 @@ fun ModuleItem(
         }
 
         if (hasDescription) {
-            Box(
+            ExpandableDescriptionText(
+                text = module.description,
+                expanded = expanded,
+                maxLinesLimit = maxLinesLimit,
                 modifier = Modifier
-                    .padding(top = 2.dp)
-                    .animateContentSize(
-                        animationSpec = tween(
-                            durationMillis = 250,
-                            easing = FastOutSlowInEasing
-                        )
-                    )
-            ) {
-                Text(
-                    text = module.description,
-                    fontSize = 14.sp,
-                    color = colorScheme.onSurfaceVariantSummary,
-                    overflow = if (expanded) TextOverflow.Clip else TextOverflow.Ellipsis,
-                    maxLines = if (expanded) Int.MAX_VALUE else 4,
-                    textDecoration = textDecoration
-                )
-            }
+                    .fillMaxWidth()
+                    .padding(top = 2.dp),
+                fontSize = 14.sp,
+                color = colorScheme.onSurfaceVariantSummary,
+                textDecoration = textDecoration
+            )
         }
 
         HorizontalDivider(

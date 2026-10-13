@@ -150,7 +150,11 @@ pub fn probe_ping(port: u16) -> Option<PingInfo> {
     }
     Some(PingInfo {
         pid: v.get("pid")?.as_u64()? as u32,
-        bin_sha: v.get("bin_sha").and_then(|x| x.as_str()).unwrap_or_default().to_string(),
+        bin_sha: v
+            .get("bin_sha")
+            .and_then(|x| x.as_str())
+            .unwrap_or_default()
+            .to_string(),
     })
 }
 
@@ -183,8 +187,6 @@ pub fn self_exe_sha() -> &'static str {
     })
 }
 
-
-
 /// 服务自己的名字 —— `/api/ping` 用它表明"这个端口上是我"。
 ///
 /// ⚠️ 这里踩过一个隐蔽的坑（2026-09-17，换端口修了三次都"失败"的真凶）：
@@ -211,7 +213,6 @@ pub fn effective_port() -> Option<u16> {
     }
     ports.into_iter().find(|p| probe_own(*p))
 }
-
 
 /// 路径前缀：猜不到的一段（**注意：它本身不是秘密**，只是挡住乱扫；
 /// 真正的钥匙是 [base_path] 里拼上去的 token）
@@ -310,7 +311,6 @@ pub fn authed_rel(path: &str, token: &str) -> Option<String> {
     Some(format!("/{tail}"))
 }
 
-
 const MAX_HEAD: usize = 16 * 1024;
 const MAX_BODY: usize = 64 * 1024;
 /// 上传装模块的体量上限（模块 zip 一般几 MB ~ 几十 MB；给足余量但不无限）
@@ -376,7 +376,12 @@ pub trait Backend: Send + Sync + 'static {
     /// 跑模块的 action.sh 并把输出带回来（返回 {code, output}）
     fn module_action(&self, id: &str) -> Result<serde_json::Value, String>;
     /// 模块网页里的 `ksu.exec`（返回 {errno, stdout, stderr}；options 支持 cwd/env）
-    fn module_exec(&self, id: &str, cmd: &str, options_json: &str) -> Result<serde_json::Value, String>;
+    fn module_exec(
+        &self,
+        id: &str,
+        cmd: &str,
+        options_json: &str,
+    ) -> Result<serde_json::Value, String>;
     /// 模块网页的静态文件；html 里由实现方注入桥脚本（返回 mime + 字节）
     fn module_web_file(&self, id: &str, rel: &str) -> Result<(String, Vec<u8>), String>;
     /// 模块网页的 `ksu.listPackages(type)`：返回 {packages:[…]}
@@ -406,14 +411,17 @@ impl Server {
     }
 }
 
-
 /// 启动监听（阻塞在 accept 循环；调用方负责放进线程）
 pub fn serve(server: &Arc<Server>) -> std::io::Result<()> {
     // 逐个试候选端口：某台手机上 18427 可能被别的 App 占了，自动顺延
     let cfg0 = Config::load();
     let mut tries: Vec<u16> = Vec::with_capacity(CANDIDATE_PORTS.len() + 1);
     // 优先级：命令行显式指定 > 配置文件里的首选 > 固定备选
-    let want = if port_override() >= 1024 { port_override() } else { cfg0.port };
+    let want = if port_override() >= 1024 {
+        port_override()
+    } else {
+        cfg0.port
+    };
     if want >= 1024 {
         tries.push(want);
     }
@@ -458,7 +466,9 @@ pub fn serve(server: &Arc<Server>) -> std::io::Result<()> {
     let listener = listener;
     let _ = listener.set_nonblocking(false);
     // ⚠️ 日志里**绝不写 token**（logcat 别的 App 也读得到）。
-    info!("网页管理器已启动：http://127.0.0.1:{port}{PATH}/<专属密钥>（仅本机；密钥在 webadmin.conf）");
+    info!(
+        "网页管理器已启动：http://127.0.0.1:{port}{PATH}/<专属密钥>（仅本机；密钥在 webadmin.conf）"
+    );
     for stream in listener.incoming() {
         match stream {
             Ok(mut s) => {
@@ -503,12 +513,7 @@ fn handle(server: &Server, stream: TcpStream) -> std::io::Result<()> {
         HeadRead::Empty => return respond(&mut writer, 404, PLAIN, b"Not Found"),
         // 🟠（v2.18）超长头**明确回 431**（旧写法继续解析半截头、什么都不回）
         HeadRead::TooLarge => {
-            return respond(
-                &mut writer,
-                431,
-                PLAIN,
-                b"Request Header Fields Too Large",
-            );
+            return respond(&mut writer, 431, PLAIN, b"Request Header Fields Too Large");
         }
     };
 
@@ -683,7 +688,12 @@ fn handle(server: &Server, stream: TcpStream) -> std::io::Result<()> {
     }
 
     match rel {
-        "/api/status" => respond(&mut writer, 200, JSON, server.backend.status().to_string().as_bytes()),
+        "/api/status" => respond(
+            &mut writer,
+            200,
+            JSON,
+            server.backend.status().to_string().as_bytes(),
+        ),
         // 专用探活接口：给"这个端口上是不是我们自己的服务"当判据（见 SERVICE_NAME 的注释）
         "/api/ping" => respond(
             &mut writer,
@@ -695,15 +705,28 @@ fn handle(server: &Server, stream: TcpStream) -> std::io::Result<()> {
                 "pid": std::process::id(),
                 "bin_sha": self_exe_sha(),
             })
-                .to_string()
-                .as_bytes(),
+            .to_string()
+            .as_bytes(),
         ),
-        "/api/modules" => respond(&mut writer, 200, JSON, server.backend.modules().to_string().as_bytes()),
-        "/api/superusers" => {
-            respond(&mut writer, 200, JSON, server.backend.superusers().to_string().as_bytes())
-        }
+        "/api/modules" => respond(
+            &mut writer,
+            200,
+            JSON,
+            server.backend.modules().to_string().as_bytes(),
+        ),
+        "/api/superusers" => respond(
+            &mut writer,
+            200,
+            JSON,
+            server.backend.superusers().to_string().as_bytes(),
+        ),
         // 超级用户：全部 App + 授权状态
-        "/api/apps" => respond(&mut writer, 200, JSON, server.backend.apps().to_string().as_bytes()),
+        "/api/apps" => respond(
+            &mut writer,
+            200,
+            JSON,
+            server.backend.apps().to_string().as_bytes(),
+        ),
         // 超级用户：读某个 App 的 root 配置
         "/api/app/profile" if method == "GET" => {
             let uid = params.get("uid").and_then(|v| v.trim().parse::<u32>().ok());
@@ -782,7 +805,12 @@ fn handle(server: &Server, stream: TcpStream) -> std::io::Result<()> {
             require_post!();
             let id = params.get("id").cloned().unwrap_or_default();
             if !valid_id(&id) {
-                return respond(&mut writer, 200, JSON, result_json(Err("模块 id 不合法".into())).as_bytes());
+                return respond(
+                    &mut writer,
+                    200,
+                    JSON,
+                    result_json(Err("模块 id 不合法".into())).as_bytes(),
+                );
             }
             let body = match server.backend.module_action(&id) {
                 Ok(mut v) => {
@@ -802,7 +830,12 @@ fn handle(server: &Server, stream: TcpStream) -> std::io::Result<()> {
             let cmd = params.get("cmd").cloned().unwrap_or_default();
             let options = params.get("options").cloned().unwrap_or_default();
             if !valid_id(&id) || cmd.trim().is_empty() {
-                return respond(&mut writer, 200, JSON, result_json(Err("参数不合法".into())).as_bytes());
+                return respond(
+                    &mut writer,
+                    200,
+                    JSON,
+                    result_json(Err("参数不合法".into())).as_bytes(),
+                );
             }
             let body = match server.backend.module_exec(&id, &cmd, &options) {
                 Ok(mut v) => {
@@ -832,7 +865,10 @@ fn handle(server: &Server, stream: TcpStream) -> std::io::Result<()> {
         }
         "/api/module/packages-info" => {
             require_post!();
-            let names = params.get("names").cloned().unwrap_or_else(|| "[]".to_string());
+            let names = params
+                .get("names")
+                .cloned()
+                .unwrap_or_else(|| "[]".to_string());
             let body = match server.backend.module_packages_info(&names) {
                 Ok(mut v) => {
                     if let Some(o) = v.as_object_mut() {
@@ -855,9 +891,17 @@ fn handle(server: &Server, stream: TcpStream) -> std::io::Result<()> {
                 .unwrap_or_default();
             let options = params.get("options").cloned().unwrap_or_default();
             if !valid_id(&id) || cmd.trim().is_empty() {
-                return respond(&mut writer, 200, JSON, result_json(Err("参数不合法".into())).as_bytes());
+                return respond(
+                    &mut writer,
+                    200,
+                    JSON,
+                    result_json(Err("参数不合法".into())).as_bytes(),
+                );
             }
-            let body = match server.backend.module_spawn_start(&id, &cmd, &args, &options) {
+            let body = match server
+                .backend
+                .module_spawn_start(&id, &cmd, &args, &options)
+            {
                 Ok(mut v) => {
                     if let Some(o) = v.as_object_mut() {
                         o.insert("ok".to_string(), serde_json::json!(true));
@@ -942,9 +986,7 @@ fn valid_code(code: &str) -> bool {
 fn valid_id(id: &str) -> bool {
     !id.is_empty()
         && id.len() <= 128
-        && !id
-            .chars()
-            .any(|c| c.is_control() || c == '/' || c == '\\')
+        && !id.chars().any(|c| c.is_control() || c == '/' || c == '\\')
 }
 
 /// 包名规则（比 valid_id 更严：Android 包名只允许字母数字下划线和点）
@@ -1134,8 +1176,7 @@ fn url_decode(s: &str) -> String {
 }
 
 /// 网页管理器自己的页面用这条：**一个外部请求都不许发**
-const CSP_MAIN: &str =
-    "default-src 'none'; style-src 'self' 'unsafe-inline'; script-src 'self'; \
+const CSP_MAIN: &str = "default-src 'none'; style-src 'self' 'unsafe-inline'; script-src 'self'; \
      img-src 'self' data:; connect-src 'self'; frame-src 'self'; \
      base-uri 'none'; form-action 'none'";
 
@@ -1144,8 +1185,7 @@ const CSP_MAIN: &str =
 ///   · `script-src` 加 `'unsafe-inline'` —— **模块页面的逻辑基本都是内联 <script>**
 ///     （真机踩到：只给 'self' 会把模块自己的脚本整段拦掉 → 页面上按钮全点不动）。
 /// 这两条只对**模块自己的页面**生效；网页管理器自己的页面仍然是严格版（零外部请求）。
-const CSP_MODWEB: &str =
-    "default-src 'none'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; \
+const CSP_MODWEB: &str = "default-src 'none'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; \
      img-src 'self' data: https:; connect-src 'self'; \
      base-uri 'none'; form-action 'none'";
 
@@ -1342,7 +1382,6 @@ pub fn new_token() -> Option<String> {
     random_hex_secure(TOKEN_BYTES)
 }
 
-
 /// 取一段随机十六进制（会话 id 之类）。读不到 /dev/urandom 就退回时间戳，
 /// **只用于"别撞车"的标识**，不用于安全用途。
 pub fn random_hex(bytes: usize) -> Option<String> {
@@ -1379,8 +1418,8 @@ pub fn random_hex_secure(bytes: usize) -> Option<String> {
 /// 老的书签会在下一次请求时得到 401 —— 这正是"重置"的语义。
 pub fn reset_token() -> std::io::Result<String> {
     let mut cfg = Config::load();
-    let token = new_token()
-        .ok_or_else(|| std::io::Error::other("取不到 /dev/urandom，没法生成新密钥"))?;
+    let token =
+        new_token().ok_or_else(|| std::io::Error::other("取不到 /dev/urandom，没法生成新密钥"))?;
     cfg.token.clone_from(&token);
     cfg.save()?;
     info!("网页管理器访问密钥已重置（新密钥只在返回值和配置文件里，未写日志）");
@@ -1403,7 +1442,11 @@ pub fn url() -> String {
     // 用 load_or_create：命令行/App 问地址时，配置文件里必须有密钥，
     // 否则打印出来的链接是"没钥匙的门"，用户点了就 401。
     let c = Config::load_or_create();
-    let fallback = if c.bound_port > 0 { c.bound_port } else { c.port };
+    let fallback = if c.bound_port > 0 {
+        c.bound_port
+    } else {
+        c.port
+    };
     url_with(effective_port().unwrap_or(fallback), &c.token)
 }
 
@@ -1429,13 +1472,15 @@ mod tests {
         let bytes = js.as_bytes();
         let needle = b"ic(\"";
         let mut i = 0;
-        while let Some(pos) = js[i..].find("ic(\"") .map(|p| p + i) {
+        while let Some(pos) = js[i..].find("ic(\"").map(|p| p + i) {
             let start = pos + needle.len();
             let rest = &js[start..];
             if let Some(end) = rest.find('"') {
                 let name = &rest[..end];
                 if !name.is_empty()
-                    && name.chars().all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == '-')
+                    && name
+                        .chars()
+                        .all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == '-')
                     && !used.contains(&name.to_string())
                 {
                     used.push(name.to_string());
@@ -1446,7 +1491,7 @@ mod tests {
             }
         }
         for name in &used {
-            if !sprite.contains(&format!("id=\"i-{name}\"") ) {
+            if !sprite.contains(&format!("id=\"i-{name}\"")) {
                 missing.push(name.clone());
             }
         }
@@ -1471,7 +1516,10 @@ mod tests {
             url_with(18437, &t),
             format!("http://127.0.0.1:18437{}/{t}", PATH)
         );
-        assert!(!url_with(18427, &t).contains('?'), "地址里不该带 ?k= 之类的查询参数");
+        assert!(
+            !url_with(18427, &t).contains('?'),
+            "地址里不该带 ?k= 之类的查询参数"
+        );
     }
 
     /// 🔐 新密钥：形状必须是 64 位十六进制、每次都不同、且**只来自 /dev/urandom**。
@@ -1634,7 +1682,9 @@ mod tests {
     /// 同时确认文件权限是 0600（别的 App 读不到，只有 root 读得到）。
     #[test]
     fn token_survives_reload_and_file_is_0600() {
-        let _guard = ENV_LOCK.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
+        let _guard = ENV_LOCK
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
         let tmp = std::env::temp_dir().join("7k-webadmin-token");
         let _ = std::fs::create_dir_all(&tmp);
         let conf = tmp.join("webadmin.conf");
@@ -1652,8 +1702,14 @@ mod tests {
         let first = cfg.token.clone();
         // 重新加载 = 守护进程重启/关掉再打开
         let again = Config::load();
-        assert_eq!(again.token, first, "重开必须沿用同一个密钥（否则书签全失效）");
-        assert!(again.enabled && again.bound_port == 18437, "别的字段也要原样回来");
+        assert_eq!(
+            again.token, first,
+            "重开必须沿用同一个密钥（否则书签全失效）"
+        );
+        assert!(
+            again.enabled && again.bound_port == 18437,
+            "别的字段也要原样回来"
+        );
         // 再存一次（模拟 off → on）也不许换密钥
         let mut c2 = Config::load();
         assert!(!c2.ensure_token());
@@ -1679,8 +1735,8 @@ mod tests {
     #[test]
     fn port_rule() {
         assert!((1024..=65535).contains(&18427));
-        assert!(!(1024..=65535).contains(&80));     // 系统保留段
-        assert!(!(1024..=65535).contains(&70000));  // 超出范围（u16 已挡住更大值）
+        assert!(!(1024..=65535).contains(&80)); // 系统保留段
+        assert!(!(1024..=65535).contains(&70000)); // 超出范围（u16 已挡住更大值）
     }
 
     #[test]
@@ -1730,7 +1786,6 @@ mod tests {
         assert!(!ksud_same(&a, ""), "盘上算不出指纹就保守重启");
         assert!(!ksud_same("", ""), "两边都空更不能当成一样");
     }
-
 
     #[test]
     fn pkg_rule() {
@@ -1851,7 +1906,12 @@ mod tests {
             }
             Ok(serde_json::json!({ "id": id, "code": 0, "output": "hello from action.sh" }))
         }
-        fn module_exec(&self, id: &str, cmd: &str, options_json: &str) -> Result<serde_json::Value, String> {
+        fn module_exec(
+            &self,
+            id: &str,
+            cmd: &str,
+            options_json: &str,
+        ) -> Result<serde_json::Value, String> {
             Ok(serde_json::json!({
                 "errno": 0,
                 "stdout": format!("{id}:{cmd}"),
@@ -2017,26 +2077,37 @@ mod tests {
         let tmp = std::env::temp_dir().join("7k-webadmin-ui");
         let _ = std::fs::create_dir_all(&tmp);
         unsafe {
-            std::env::set_var("WEBADMIN_CONF", tmp.join("webadmin.conf").display().to_string());
+            std::env::set_var(
+                "WEBADMIN_CONF",
+                tmp.join("webadmin.conf").display().to_string(),
+            );
             std::env::set_var("WEBADMIN_UPLOAD_DIR", tmp.display().to_string());
         }
         let server = Server::new(Arc::new(Fake));
         std::thread::spawn(move || {
             let _ = serve(&server);
         });
-        println!("UI harness ready: {}  （挂 300 秒）", url_with(wait_own_port(), &Config::load().token));
+        println!(
+            "UI harness ready: {}  （挂 300 秒）",
+            url_with(wait_own_port(), &Config::load().token)
+        );
         std::thread::sleep(Duration::from_secs(300));
     }
 
     #[test]
     fn http_routes_end_to_end() {
-        let _guard = ENV_LOCK.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
+        let _guard = ENV_LOCK
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
         let tmp = std::env::temp_dir().join("7k-webadmin-test");
         let _ = std::fs::create_dir_all(&tmp);
         // 清掉上一轮留下的配置：否则里面已经有密钥，"首次生成"的断言会假失败
         let _ = std::fs::remove_file(tmp.join("webadmin.conf"));
         unsafe {
-            std::env::set_var("WEBADMIN_CONF", tmp.join("webadmin.conf").display().to_string());
+            std::env::set_var(
+                "WEBADMIN_CONF",
+                tmp.join("webadmin.conf").display().to_string(),
+            );
             std::env::set_var("WEBADMIN_UPLOAD_DIR", tmp.display().to_string());
         }
 
@@ -2086,7 +2157,8 @@ mod tests {
         {
             use std::io::{Read as _, Write as _};
             let mut sock = TcpStream::connect(("127.0.0.1", port)).unwrap();
-            sock.write_all(format!("GET {base}/x HTTP/1.0\r\n\r\n").as_bytes()).unwrap();
+            sock.write_all(format!("GET {base}/x HTTP/1.0\r\n\r\n").as_bytes())
+                .unwrap();
             let mut raw = Vec::new();
             let _ = sock.read_to_end(&mut raw);
             let head = String::from_utf8_lossy(&raw);
@@ -2101,11 +2173,11 @@ mod tests {
         //    否则攻击者能靠响应差异判断"路径猜对了没有"。
         let mut unauthorized: Vec<String> = Vec::new();
         for probe in [
-            PATH.to_string(),                                   // 老地址（只有前缀）
-            format!("{PATH}/"),                                 // 前缀 + 斜杠
-            format!("{PATH}/api/status"),                       // 老式 API 地址
-            format!("{PATH}/{}", &token[..TOKEN_LEN - 1]),      // 密钥少一位
-            format!("{PATH}/{token}0"),                         // 密钥多一位
+            PATH.to_string(),                              // 老地址（只有前缀）
+            format!("{PATH}/"),                            // 前缀 + 斜杠
+            format!("{PATH}/api/status"),                  // 老式 API 地址
+            format!("{PATH}/{}", &token[..TOKEN_LEN - 1]), // 密钥少一位
+            format!("{PATH}/{token}0"),                    // 密钥多一位
             {
                 // ⚠️🐞 「密钥错一位」这条例子的**真正偶发根因**（2026-09-22 定死）：
                 //    旧写法把末位**无条件换成 `'0'`** —— 密钥是随机生成的 64 位十六进制，
@@ -2115,15 +2187,19 @@ mod tests {
                 //    修法见 `wrong_token()`：换成**与末位不同**的字符（回归见
                 //    `wrong_token_always_differs`）。
                 let bad = wrong_token(&token);
-                format!("{PATH}/{bad}/api/status")              // 密钥错一位
+                format!("{PATH}/{bad}/api/status") // 密钥错一位
             },
-            "/api/status".to_string(),                          // 连前缀都不对
+            "/api/status".to_string(), // 连前缀都不对
             "/".to_string(),
-            "/index.html".to_string(),                          // 有人会去摸根路径
+            "/index.html".to_string(), // 有人会去摸根路径
         ] {
             let (code, body) = http(port, "GET", &probe, b"");
             assert_eq!(code, 401, "{probe} 必须 401（实际 {code}）");
-            assert_eq!(body.trim(), "Unauthorized", "{probe} 的 401 响应体必须固定: {body:?}");
+            assert_eq!(
+                body.trim(),
+                "Unauthorized",
+                "{probe} 的 401 响应体必须固定: {body:?}"
+            );
             assert!(!body.contains(&token), "{probe} 的响应里泄露了密钥！");
             unauthorized.push(format!("{code}|{body}"));
         }
@@ -2139,7 +2215,10 @@ mod tests {
             &format!("{PATH}/api/app/root"),
             b"pkg=com.demo&uid=10123&allow=1",
         );
-        assert_eq!(code, 401, "不带密钥的 /api/app/root 必须 401（防本机 App 自授 root）");
+        assert_eq!(
+            code, 401,
+            "不带密钥的 /api/app/root 必须 401（防本机 App 自授 root）"
+        );
         assert_eq!(body.trim(), "Unauthorized");
         let (code, _) = http(port, "GET", &format!("{PATH}/api/apps"), b"");
         assert_eq!(code, 401, "应用列表也不许裸奔");
@@ -2198,10 +2277,18 @@ mod tests {
         // 7) 日志：limit / 关键字要透传
         let (code, body) = http(port, "GET", &format!("{base}/api/sulog?limit=7&q=abc"), b"");
         assert_eq!(code, 200);
-        assert!(body.contains("\"limit\":7") && body.contains("\"q\":\"abc\""), "{body}");
+        assert!(
+            body.contains("\"limit\":7") && body.contains("\"q\":\"abc\""),
+            "{body}"
+        );
         let (code, _) = http(port, "POST", &format!("{base}/api/sulog/clear"), b"");
         assert_eq!(code, 200);
-        let (code, body) = http(port, "POST", &format!("{base}/api/sulog/enable"), b"enable=1");
+        let (code, body) = http(
+            port,
+            "POST",
+            &format!("{base}/api/sulog/enable"),
+            b"enable=1",
+        );
         assert_eq!(code, 200);
         assert!(body.contains("sulog=true"), "{body}");
 
@@ -2231,7 +2318,10 @@ mod tests {
             &zip,
         );
         assert_eq!(code, 200);
-        assert!(body.contains("\"ok\":false") && body.contains("zip"), "{body}");
+        assert!(
+            body.contains("\"ok\":false") && body.contains("zip"),
+            "{body}"
+        );
 
         let (code, body) = http(
             port,
@@ -2252,11 +2342,27 @@ mod tests {
         assert!(body.contains("不是"), "{body}");
 
         // 9.5) 模块动作脚本输出
-        let (code, body) = http(port, "POST", &format!("{base}/api/module/action"), b"id=demo");
+        let (code, body) = http(
+            port,
+            "POST",
+            &format!("{base}/api/module/action"),
+            b"id=demo",
+        );
         assert_eq!(code, 200);
-        assert!(body.contains("hello from action.sh") && body.contains("\"ok\":true"), "{body}");
-        let (_, body) = http(port, "POST", &format!("{base}/api/module/action"), b"id=bad");
-        assert!(body.contains("\"ok\":false") && body.contains("没有动作脚本"), "{body}");
+        assert!(
+            body.contains("hello from action.sh") && body.contains("\"ok\":true"),
+            "{body}"
+        );
+        let (_, body) = http(
+            port,
+            "POST",
+            &format!("{base}/api/module/action"),
+            b"id=bad",
+        );
+        assert!(
+            body.contains("\"ok\":false") && body.contains("没有动作脚本"),
+            "{body}"
+        );
 
         // 9.6) 模块网页的 ksu.exec 桥（**options 必须透传**：cwd/env）
         let (code, body) = http(
@@ -2281,7 +2387,12 @@ mod tests {
         );
 
         // 9.65) 包列表（同步接口，桥直接返回 JSON 字符串）
-        let (code, body) = http(port, "POST", &format!("{base}/api/module/packages"), b"type=user");
+        let (code, body) = http(
+            port,
+            "POST",
+            &format!("{base}/api/module/packages"),
+            b"type=user",
+        );
         assert_eq!(code, 200);
         assert!(body.contains("com.demo.user"), "{body}");
         let (_, body) = http(
@@ -2290,7 +2401,10 @@ mod tests {
             &format!("{base}/api/module/packages-info"),
             b"names=%5B%22com.a%22%2C%22com.b%22%5D",
         );
-        assert!(body.contains("\"packageName\":\"com.b\"") && body.contains("\"uid\":10123"), "{body}");
+        assert!(
+            body.contains("\"packageName\":\"com.b\"") && body.contains("\"uid\":10123"),
+            "{body}"
+        );
 
         // 9.66) spawn：起进程 + 轮询（桥按行发 data 事件 + exit）
         let (code, body) = http(
@@ -2308,13 +2422,21 @@ mod tests {
             b"sid=sid-echo-1",
         );
         assert_eq!(code, 200);
-        assert!(body.contains("line1") && body.contains("\"done\":true") && body.contains("\"code\":0"), "{body}");
+        assert!(
+            body.contains("line1") && body.contains("\"done\":true") && body.contains("\"code\":0"),
+            "{body}"
+        );
 
         // 9.7) 模块网页静态资源：正常能取、越界/非 GET 一律 404
         let (code, body) = http(port, "GET", &format!("{base}/modweb/demo/index.html"), b"");
         assert_eq!(code, 200);
         assert!(body.contains("demo webui"), "{body}");
-        let (code, _) = http(port, "GET", &format!("{base}/modweb/demo/../../etc/passwd"), b"");
+        let (code, _) = http(
+            port,
+            "GET",
+            &format!("{base}/modweb/demo/../../etc/passwd"),
+            b"",
+        );
         assert_eq!(code, 404, "目录穿越必须挡住");
         let (code, _) = http(port, "GET", &format!("{base}/modweb/nope/index.html"), b"");
         assert_eq!(code, 404);
@@ -2322,7 +2444,12 @@ mod tests {
         assert_eq!(code, 404, "模块网页只收 GET");
 
         // 10) 写接口只收 POST；未知路径 404
-        let (code, _) = http(port, "GET", &format!("{base}/api/module/install?name=a.zip"), b"");
+        let (code, _) = http(
+            port,
+            "GET",
+            &format!("{base}/api/module/install?name=a.zip"),
+            b"",
+        );
         assert_eq!(code, 404, "写接口 GET 必须 404");
         let (code, _) = http(port, "GET", &format!("{base}/api/nope"), b"");
         assert_eq!(code, 404);
@@ -2337,7 +2464,13 @@ mod tests {
         //     release 构建下 rust-embed 会把资源**压缩**嵌入，所以这条同时验证了解压路径
         //     —— 跑通它 = 发出去的 libksud.so 里那份前端确实是新版。
         let (_, js) = http(port, "GET", &format!("{base}/a/app.js"), b"");
-        for marker in ["超级用户", "上传安装", "超级用户日志", "/api/app/root", "/api/sulog"] {
+        for marker in [
+            "超级用户",
+            "上传安装",
+            "超级用户日志",
+            "/api/app/root",
+            "/api/sulog",
+        ] {
             assert!(js.contains(marker), "app.js 里缺 {marker}");
         }
 
@@ -2354,13 +2487,22 @@ mod tests {
                 }
             }
         }
-        assert!(bad.is_empty(), "api 路径里不许带 ?（要改用 params 参数）: {bad:?}");
-        assert!(js.contains("function qs(params)"), "app.js 里缺少 qs() 参数拼接函数");
+        assert!(
+            bad.is_empty(),
+            "api 路径里不许带 ?（要改用 params 参数）: {bad:?}"
+        );
+        assert!(
+            js.contains("function qs(params)"),
+            "app.js 里缺少 qs() 参数拼接函数"
+        );
         let (_, css) = http(port, "GET", &format!("{base}/a/app.css"), b"");
         let (_, js2) = http(port, "GET", &format!("{base}/a/app.js"), b"");
         assert!(!js2.contains("__K__"), "前端里不该再有口令占位符");
         assert!(!js2.contains("\"?k=\""), "前端代码里不该再拼口令参数");
-        assert!(css.contains(".logitem") && css.contains(".prog"), "app.css 里缺新样式");
+        assert!(
+            css.contains(".logitem") && css.contains(".prog"),
+            "app.css 里缺新样式"
+        );
         let (_, page) = http(port, "GET", &base, b"");
         assert!(!page.contains("__K__"), "页面里不该再有口令占位符");
         assert!(
@@ -2395,6 +2537,4 @@ mod tests {
             std::env::remove_var("WEBADMIN_UPLOAD_DIR");
         }
     }
-
 }
-

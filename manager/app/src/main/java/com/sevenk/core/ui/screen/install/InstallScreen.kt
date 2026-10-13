@@ -37,9 +37,11 @@ import com.sevenk.core.ui.util.LkmSelection
 import com.sevenk.core.ui.util.getAvailablePartitions
 import com.sevenk.core.ui.util.getCurrentKmi
 import com.sevenk.core.ui.util.getDefaultPartition
+import com.sevenk.core.ui.util.getLoadedBlockableModules
 import com.sevenk.core.ui.util.getPersistedStealthFlag
 import com.sevenk.core.ui.util.getSlotSuffix
 import com.sevenk.core.ui.util.isAbDevice
+import com.sevenk.core.ui.util.isBlockModulesValid
 import com.sevenk.core.ui.util.probeRemoteBootPartitions
 import com.sevenk.core.ui.util.rootAvailable as probeRootAvailable
 import top.yukonga.miuix.kmp.basic.SnackbarHostState as MiuixSnackbarHostState
@@ -68,6 +70,24 @@ fun InstallScreen() {
     var allowShell by rememberSaveable { mutableStateOf(false) }
     var enableAdb by rememberSaveable { mutableStateOf(false) }
     var forceBackup by rememberSaveable { mutableStateOf(false) }
+    var blockModulesEnabled by rememberSaveable { mutableStateOf(false) }
+    var blockModules by rememberSaveable { mutableStateOf("") }
+    var blockModulesPrefilled by rememberSaveable { mutableStateOf(false) }
+    // Blocking a module the device needs can bootloop it, so nothing is
+    // blocked unless the user explicitly opts in.
+    val effectiveBlockModules = if (blockModulesEnabled) blockModules else ""
+
+    // Pre-fill the block list with the known anti-root modules actually loaded
+    // on this device, once. It only takes effect once the user opts in.
+    LaunchedEffect(Unit) {
+        if (!blockModulesPrefilled) {
+            blockModulesPrefilled = true
+            val detected = getLoadedBlockableModules()
+            if (detected.isNotEmpty() && blockModules.isBlank()) {
+                blockModules = detected.joinToString(",")
+            }
+        }
+    }
 
     val currentKmi by produceState(initialValue = "") { value = getCurrentKmi() }
     val partitions by produceState(initialValue = emptyList()) { value = getAvailablePartitions() }
@@ -149,8 +169,11 @@ fun InstallScreen() {
         }
     }
 
+    val blockModulesInvalidMessage = stringResource(R.string.install_block_modules_invalid)
     val onInstall = {
-        installMethod?.let { rawMethod ->
+        if (!isBlockModulesValid(effectiveBlockModules)) {
+            showMessage(blockModulesInvalidMessage)
+        } else installMethod?.let { rawMethod ->
             // 🟡 v2.3（审计 B，纵深防御）：`installMethod` 是 rememberSaveable ——
             // 旋转 / 进程重建后恢复出来的旧值，可能**已经不在**当前 `installMethodOptions` 里
             // （典型：当时有 root 选了「直接安装」，回来时 root 没了 / 隐身被打开了）。
@@ -171,7 +194,8 @@ fun InstallScreen() {
                             lkm = lkmSelection,
                             allowShell = allowShell,
                             enableAdb = enableAdb,
-                            backup = forceBackup
+                            backup = forceBackup,
+                            blockModules = effectiveBlockModules
                         )
                         else -> FlashIt.FlashBoot(
                             boot = if (rawMethod is InstallMethod.SelectFile) rawMethod.uri else null,
@@ -180,7 +204,8 @@ fun InstallScreen() {
                             partition = partitions.getOrNull(partitionSelectionIndex),
                             allowShell = allowShell,
                             enableAdb = enableAdb,
-                            backup = rawMethod is InstallMethod.SelectFile && forceBackup
+                            backup = rawMethod is InstallMethod.SelectFile && forceBackup,
+                            blockModules = effectiveBlockModules
                         )
                     }
                 )
@@ -276,6 +301,9 @@ fun InstallScreen() {
         enableAdb = enableAdb,
         forceBackup = forceBackup,
         canForceBackup = installMethod is InstallMethod.SelectFile,
+        blockModulesEnabled = blockModulesEnabled,
+        blockModules = blockModules,
+        blockModulesValid = isBlockModulesValid(effectiveBlockModules),
     )
     val actions = InstallScreenActions(
         onBack = dropUnlessResumed { navigator.pop() },
@@ -325,6 +353,12 @@ fun InstallScreen() {
         },
         onSelectForceBackup = {
             forceBackup = it
+        },
+        onSelectBlockModules = {
+            blockModulesEnabled = it
+        },
+        onBlockModulesChange = {
+            blockModules = it
         }
     )
 

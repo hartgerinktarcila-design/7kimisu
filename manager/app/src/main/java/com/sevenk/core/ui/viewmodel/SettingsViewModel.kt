@@ -44,11 +44,14 @@ class SettingsViewModel(
             val miuixMonet = runCatching { repo.miuixMonet }.getOrDefault(prev.miuixMonet)
             val keyColor = runCatching { repo.keyColor }.getOrDefault(prev.keyColor)
             val enablePredictiveBack = runCatching { repo.enablePredictiveBack }.getOrDefault(prev.enablePredictiveBack)
+            val enableSwipeDismiss = runCatching { repo.enableSwipeDismiss }.getOrDefault(prev.enableSwipeDismiss)
+            val pagerInterceptionMode = runCatching { repo.pagerInterceptionMode }.getOrDefault(prev.pagerInterceptionMode)
             val enableBlur = runCatching { repo.enableBlur }.getOrDefault(prev.enableBlur)
             val enableFloatingBottomBar = runCatching { repo.enableFloatingBottomBar }.getOrDefault(prev.enableFloatingBottomBar)
             val enableFloatingBottomBarBlur = runCatching { repo.enableFloatingBottomBarBlur }.getOrDefault(prev.enableFloatingBottomBarBlur)
             val enableNavigationBadge = runCatching { repo.enableNavigationBadge }.getOrDefault(prev.enableNavigationBadge)
             val pageScale = runCatching { repo.pageScale }.getOrDefault(prev.pageScale)
+            val moduleDescriptionMaxLines = runCatching { repo.moduleDescriptionMaxLines }.getOrDefault(prev.moduleDescriptionMaxLines)
             val enableWebDebugging = runCatching { repo.enableWebDebugging }.getOrDefault(prev.enableWebDebugging)
             val colorStyle = runCatching { repo.colorStyle }.getOrDefault(prev.colorStyle)
             val colorSpec = runCatching { repo.colorSpec }.getOrDefault(prev.colorSpec)
@@ -59,16 +62,42 @@ class SettingsViewModel(
             val suCompatPersistValue = runCatching { repo.getSuCompatPersistValue() }.getOrNull()
             val isSuEnabled = runCatching { repo.isSuEnabled() }.getOrDefault(prev.isSuEnabled)
 
-            val suCompatMode = if (suCompatPersistValue == 0L) 2 else if (!isSuEnabled) 1 else 0
+            // Forced features show the value in effect, the persisted one is ignored
+            val suCompatMode = when {
+                suCompatStatus == "forced" -> if (isSuEnabled) 0 else 2
+                suCompatPersistValue == 0L -> 2
+                !isSuEnabled -> 1
+                else -> 0
+            }
 
             val kernelUmountStatus = runCatching { repo.getKernelUmountStatus() }.getOrDefault(prev.kernelUmountStatus)
             val isKernelUmountEnabled = runCatching { repo.isKernelUmountEnabled() }.getOrDefault(prev.isKernelUmountEnabled)
             val selinuxHideStatus = runCatching { repo.getSelinuxHideStatus() }.getOrDefault(prev.selinuxHideStatus)
             val isSelinuxHideEnabled = runCatching { repo.isSelinuxHideEnabled() }.getOrDefault(prev.isSelinuxHideEnabled)
             val sulogStatus = runCatching { repo.getSulogStatus() }.getOrDefault(prev.sulogStatus)
-            val isSulogEnabled = runCatching { repo.getSulogPersistValue() }.getOrNull() == 1L
+            val isSulogEnabled = runCatching {
+                if (sulogStatus == "forced") {
+                    repo.getSulogValue() == 1L
+                } else {
+                    repo.getSulogPersistValue() == 1L
+                }
+            }.getOrDefault(prev.isSulogEnabled)
             val adbRootStatus = runCatching { repo.getAdbRootStatus() }.getOrDefault(prev.adbRootStatus)
-            val isAdbRootEnabled = runCatching { repo.getAdbRootPersistValue() }.getOrNull() == 1L
+            val isAdbRootEnabled = runCatching {
+                if (adbRootStatus == "forced") {
+                    repo.getAdbRootValue() == 1L
+                } else {
+                    repo.getAdbRootPersistValue() == 1L
+                }
+            }.getOrDefault(prev.isAdbRootEnabled)
+            val shellSuAdbOnlyStatus = runCatching { repo.getShellSuAdbOnlyStatus() }.getOrDefault(prev.shellSuAdbOnlyStatus)
+            val isShellSuAdbOnlyEnabled = runCatching {
+                if (shellSuAdbOnlyStatus == "forced") {
+                    repo.getShellSuAdbOnlyValue() == 1L
+                } else {
+                    repo.getShellSuAdbOnlyPersistValue() == 1L
+                }
+            }.getOrDefault(prev.isShellSuAdbOnlyEnabled)
             val isDefaultUmountModules = runCatching { repo.isDefaultUmountModules() }.getOrDefault(prev.isDefaultUmountModules)
             val uiMode = runCatching { repo.uiMode }.getOrDefault(prev.uiMode)
             val autoJailbreak = runCatching { repo.autoJailbreak }.getOrDefault(prev.autoJailbreak)
@@ -84,11 +113,14 @@ class SettingsViewModel(
                     miuixMonet = miuixMonet,
                     keyColor = keyColor,
                     enablePredictiveBack = enablePredictiveBack,
+                    enableSwipeDismiss = enableSwipeDismiss,
+                    pagerInterceptionMode = pagerInterceptionMode,
                     enableBlur = enableBlur,
                     enableFloatingBottomBar = enableFloatingBottomBar,
                     enableFloatingBottomBarBlur = enableFloatingBottomBarBlur,
                     enableNavigationBadge = enableNavigationBadge,
                     pageScale = pageScale,
+                    moduleDescriptionMaxLines = moduleDescriptionMaxLines,
                     enableWebDebugging = enableWebDebugging,
                     colorStyle = colorStyle,
                     colorSpec = colorSpec,
@@ -97,6 +129,8 @@ class SettingsViewModel(
                     isSuEnabled = isSuEnabled,
                     adbRootStatus = adbRootStatus,
                     isAdbRootEnabled = isAdbRootEnabled,
+                    shellSuAdbOnlyStatus = shellSuAdbOnlyStatus,
+                    isShellSuAdbOnlyEnabled = isShellSuAdbOnlyEnabled,
                     kernelUmountStatus = kernelUmountStatus,
                     isKernelUmountEnabled = isKernelUmountEnabled,
                     selinuxHideStatus = selinuxHideStatus,
@@ -211,6 +245,16 @@ class SettingsViewModel(
         _uiState.update { it.copy(enablePredictiveBack = enabled) }
     }
 
+    fun setEnableSwipeDismiss(enabled: Boolean) {
+        repo.enableSwipeDismiss = enabled
+        _uiState.update { it.copy(enableSwipeDismiss = enabled) }
+    }
+
+    fun setPagerInterceptionMode(mode: Int) {
+        repo.pagerInterceptionMode = mode
+        _uiState.update { it.copy(pagerInterceptionMode = mode.coerceIn(0, 2)) }
+    }
+
     fun setEnableBlur(enabled: Boolean) {
         // 主题锁定:忽略
         if (ThemeLock.ENABLED) return
@@ -242,6 +286,11 @@ class SettingsViewModel(
     fun setPageScale(scale: Float) {
         repo.pageScale = scale
         _uiState.update { it.copy(pageScale = scale) }
+    }
+
+    fun setModuleDescriptionMaxLines(lines: Int) {
+        repo.moduleDescriptionMaxLines = lines
+        _uiState.update { it.copy(moduleDescriptionMaxLines = lines) }
     }
 
     fun setEnableWebDebugging(enabled: Boolean) {
@@ -324,6 +373,15 @@ class SettingsViewModel(
             if (repo.setSulogEnabled(enabled)) {
                 repo.execKsudFeatureSave()
                 _uiState.update { it.copy(isSulogEnabled = enabled) }
+            }
+        }
+    }
+
+    fun setShellSuAdbOnlyEnabled(enabled: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            if (repo.setShellSuAdbOnlyEnabled(enabled)) {
+                repo.execKsudFeatureSave()
+                _uiState.update { it.copy(isShellSuAdbOnlyEnabled = enabled) }
             }
         }
     }

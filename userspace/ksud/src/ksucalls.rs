@@ -52,6 +52,7 @@ extern "C" fn sigsys_handler(
         }
         SIGSYS_TRAPPED.store(true, std::sync::atomic::Ordering::Relaxed);
 
+        #[cfg(not(target_arch = "riscv64"))]
         let ucontext = ctx.cast::<libc::ucontext_t>();
         #[cfg(target_arch = "aarch64")]
         {
@@ -61,6 +62,12 @@ extern "C" fn sigsys_handler(
         {
             let rax = libc::REG_RAX as usize;
             (*ucontext).uc_mcontext.gregs[rax] = i64::from(-libc::EPERM);
+        }
+        #[cfg(target_arch = "riscv64")]
+        {
+            let ucontext = ctx.cast::<ksu_uapi::ucontext_t>();
+            (*ucontext).uc_mcontext.__gregs[ksu_uapi::REG_A0 as usize] =
+                (-libc::EPERM) as libc::c_ulong;
         }
     }
 }
@@ -300,13 +307,19 @@ fn install_driver_fd_isolated() -> InstallFdProbe {
         if ready <= 0 {
             libc::kill(pid, libc::SIGKILL);
         }
-        let received = if ready > 0 { recv_fd(parent_sock) } else { None };
+        let received = if ready > 0 {
+            recv_fd(parent_sock)
+        } else {
+            None
+        };
         libc::close(parent_sock);
         let mut status: libc::c_int = 0;
         libc::waitpid(pid, std::ptr::addr_of_mut!(status), 0);
 
         if ready <= 0 {
-            log::warn!("driver fd install probe timed out after {PROBE_TIMEOUT_MS}ms; killed the child");
+            log::warn!(
+                "driver fd install probe timed out after {PROBE_TIMEOUT_MS}ms; killed the child"
+            );
             return InstallFdProbe::Failed;
         }
         if libc::WIFSIGNALED(status) {
@@ -473,6 +486,13 @@ pub fn report_post_fs_data() {
     report_event(ksu_uapi::EVENT_POST_FS_DATA);
 }
 
+pub fn report_services() -> Result<bool> {
+    let mut cmd = ksu_uapi::ksu_report_event_cmd {
+        event: ksu_uapi::EVENT_SERVICES,
+    };
+    Ok(ksuctl(ksu_uapi::KSU_IOCTL_REPORT_EVENT, &raw mut cmd)? == 1)
+}
+
 pub fn report_boot_complete() {
     report_event(ksu_uapi::EVENT_BOOT_COMPLETED);
 }
@@ -496,16 +516,29 @@ pub fn set_sepolicy(payload: *const u8, payload_len: u64) -> Result<i32> {
     ksuctl(ksu_uapi::KSU_IOCTL_SET_SEPOLICY, &raw mut ioctl_cmd)
 }
 
+#[derive(Debug, Clone, Copy, Default)]
+pub struct FeatureState {
+    pub value: u64,
+    pub supported: bool,
+    /// Forced by boot config (ksu_config), the kernel refuses to change it
+    pub forced: bool,
+}
+
 /// Get feature value and support status from kernel
-/// Returns (value, supported)
-pub fn get_feature(feature_id: u32) -> Result<(u64, bool)> {
+pub fn get_feature(feature_id: u32) -> Result<FeatureState> {
     let mut cmd = ksu_uapi::ksu_get_feature_cmd {
         feature_id,
         value: 0,
         supported: 0,
     };
     ksuctl(ksu_uapi::KSU_IOCTL_GET_FEATURE, &raw mut cmd)?;
-    Ok((cmd.value, cmd.supported != 0))
+    let flags = u32::from(cmd.supported);
+    Ok(FeatureState {
+        value: cmd.value,
+        // older kernels report 1 for supported, matching the flag
+        supported: flags & ksu_uapi::KSU_FEATURE_FLAG_SUPPORTED != 0,
+        forced: flags & ksu_uapi::KSU_FEATURE_FLAG_FORCED != 0,
+    })
 }
 
 /// Set feature value in kernel
@@ -638,7 +671,6 @@ pub fn set_ksu_no_new_privs() -> anyhow::Result<()> {
     Ok(())
 }
 
-
 /// 已授权的 uid 列表（网页管理器的超级用户页 / 计数用）
 ///
 /// 注意：内核的 `ksu_get_allow_list(allow=true)` 只回 **allow_su == true** 的条目，
@@ -657,7 +689,9 @@ pub fn deny_list_uids() -> Vec<u32> {
 }
 
 fn list_uids(allow: bool) -> Vec<u32> {
-    use ksu_uapi::{ksu_new_get_allow_list_cmd, KSU_IOCTL_NEW_GET_ALLOW_LIST, KSU_IOCTL_NEW_GET_DENY_LIST};
+    use ksu_uapi::{
+        KSU_IOCTL_NEW_GET_ALLOW_LIST, KSU_IOCTL_NEW_GET_DENY_LIST, ksu_new_get_allow_list_cmd,
+    };
     let req = if allow {
         KSU_IOCTL_NEW_GET_ALLOW_LIST
     } else {
@@ -758,7 +792,9 @@ fn stealth_ioctl_as_manager(enabled: Option<bool>) -> anyhow::Result<Option<bool
             match libc::WEXITSTATUS(status) {
                 0 => Ok(Some(true)),
                 1 => Ok(Some(false)), // GET 时为"关闭"
-                c => anyhow::bail!("隐身 ioctl 失败（子进程退出码 {c}：10=切uid失败 11=没拿到新句柄 12=ioctl被拒）"),
+                c => anyhow::bail!(
+                    "隐身 ioctl 失败（子进程退出码 {c}：10=切uid失败 11=没拿到新句柄 12=ioctl被拒）"
+                ),
             }
         } else {
             anyhow::bail!("fork 失败");
@@ -915,7 +951,11 @@ fn ioctl_as_manager(req: u32, input: &[u8]) -> anyhow::Result<Option<Vec<u8>>> {
         // 入参很小（远小于 64KB 管道容量），父进程随后再读不会死锁
         let mut off = 0usize;
         while off < len {
-            let n = libc::read(rd, out.as_mut_ptr().add(off).cast::<libc::c_void>(), len - off);
+            let n = libc::read(
+                rd,
+                out.as_mut_ptr().add(off).cast::<libc::c_void>(),
+                len - off,
+            );
             if n <= 0 {
                 break;
             }

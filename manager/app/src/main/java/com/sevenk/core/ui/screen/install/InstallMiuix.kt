@@ -39,13 +39,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.sevenk.core.R
 import com.sevenk.core.ui.component.dialog.rememberConfirmDialog
 import com.sevenk.core.ui.theme.LocalEnableBlur
-import com.sevenk.core.ui.component.WarningLevel
 import com.sevenk.core.ui.util.BlurredBar
-import com.sevenk.core.ui.util.miuixBarColor
 import com.sevenk.core.ui.util.LkmSelection
+import com.sevenk.core.ui.util.miuixBarColor
 import com.sevenk.core.ui.util.rememberBlurBackdrop
 import top.yukonga.miuix.kmp.basic.BasicComponent
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
@@ -57,7 +57,9 @@ import top.yukonga.miuix.kmp.basic.Scaffold
 import top.yukonga.miuix.kmp.basic.ScrollBehavior
 import top.yukonga.miuix.kmp.basic.SnackbarHost
 import top.yukonga.miuix.kmp.basic.SnackbarHostState
+import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.basic.TextButton
+import top.yukonga.miuix.kmp.basic.TextField
 import top.yukonga.miuix.kmp.basic.TopAppBar
 import top.yukonga.miuix.kmp.blur.LayerBackdrop
 import top.yukonga.miuix.kmp.blur.layerBackdrop
@@ -272,6 +274,39 @@ internal fun InstallScreenMiuix(
                                     summary = stringResource(id = R.string.enable_adb_summary),
                                     onCheckedChange = actions.onSelectEnableAdb
                                 )
+                                CheckboxPreference(
+                                    title = stringResource(id = R.string.install_block_modules),
+                                    checked = uiState.blockModulesEnabled,
+                                    summary = stringResource(id = R.string.install_block_modules_warning),
+                                    onCheckedChange = actions.onSelectBlockModules
+                                )
+                                if (uiState.blockModulesEnabled) {
+                                    TextField(
+                                        value = uiState.blockModules,
+                                        onValueChange = actions.onBlockModulesChange,
+                                        label = stringResource(id = R.string.install_block_modules_list),
+                                        singleLine = true,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 12.dp, vertical = 8.dp)
+                                    )
+                                    Text(
+                                        text = stringResource(
+                                            if (uiState.blockModulesValid) {
+                                                R.string.install_block_modules_summary
+                                            } else {
+                                                R.string.install_block_modules_invalid
+                                            }
+                                        ),
+                                        fontSize = 12.sp,
+                                        color = if (uiState.blockModulesValid) {
+                                            colorScheme.onSurfaceVariantSummary
+                                        } else {
+                                            colorScheme.error
+                                        },
+                                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+                                    )
+                                }
                             }
                         }
                     }
@@ -280,7 +315,7 @@ internal fun InstallScreenMiuix(
                             .fillMaxWidth()
                             .padding(top = 12.dp),
                         text = stringResource(id = R.string.install_next),
-                        enabled = uiState.installMethod != null,
+                        enabled = uiState.installMethod != null && uiState.blockModulesValid,
                         colors = ButtonDefaults.textButtonColorsPrimary(),
                         onClick = actions.onNext
                     )

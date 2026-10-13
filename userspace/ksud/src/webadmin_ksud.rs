@@ -14,7 +14,7 @@ use serde_json::{Value, json};
 
 use crate::module;
 use crate::webadmin::{self, Backend, Config};
-use crate::{ksucalls, ksu_uapi};
+use crate::{ksu_uapi, ksucalls};
 use ksu_uapi::{
     app_profile, app_profile__bindgen_ty_1__bindgen_ty_1 as RootBranch,
     app_profile__bindgen_ty_1__bindgen_ty_2 as NonRootBranch,
@@ -87,13 +87,15 @@ impl Backend for KsudBackend {
     fn set_stealth(&self, enable: bool) -> Result<String, String> {
         // 同上：以内核要求的管理器身份去切换
         match ksucalls::stealth_set_authed(enable) {
-            Ok(()) => Ok(if enable { "隐身已开启" } else { "隐身已关闭" }.to_string()),
+            Ok(()) => Ok(if enable {
+                "隐身已开启"
+            } else {
+                "隐身已关闭"
+            }
+            .to_string()),
             Err(e) => Err(format!("{e:#}")),
         }
     }
-
-
-
 
     fn set_stealth_code(&self, code: &str) -> Result<String, String> {
         // 与 App 里 StealthCodeStore.write 写同一个文件：
@@ -128,7 +130,10 @@ impl Backend for KsudBackend {
         // 而密令是"退不出隐身"时唯一的保命入口 —— 少一处落盘就少一处泄露面。
         // 现在只记"改了几位数字"，足够证明"确实写过一次"，又拿不到本体。
         // ⚠️ 下面返回给**已鉴权调用方**的那句话仍带新密令（用户自己要看），那是有意的。
-        log_line(&format!("隐身密令已更新（{} 位数字，日志不记录本体）", code.len()));
+        log_line(&format!(
+            "隐身密令已更新（{} 位数字，日志不记录本体）",
+            code.len()
+        ));
         Ok(format!("已改成 {code}（退出隐身拨 *{code}#*#*）"))
     }
 
@@ -201,7 +206,8 @@ impl Backend for KsudBackend {
         if allow && uid < 2000 && uid != 1000 {
             return Err("系统核心 App（uid < 2000）不能授予 root".to_string());
         }
-        let cur = ksucalls::get_app_profile(uid, pkg).map_err(|e| format!("读取配置失败: {e:#}"))?;
+        let cur =
+            ksucalls::get_app_profile(uid, pkg).map_err(|e| format!("读取配置失败: {e:#}"))?;
         if let Some(p) = &cur
             && p.allow_su == allow
         {
@@ -274,7 +280,8 @@ impl Backend for KsudBackend {
         uid: u32,
         form: &std::collections::HashMap<String, String>,
     ) -> Result<String, String> {
-        let cur = ksucalls::get_app_profile(uid, pkg).map_err(|e| format!("读取配置失败: {e:#}"))?;
+        let cur =
+            ksucalls::get_app_profile(uid, pkg).map_err(|e| format!("读取配置失败: {e:#}"))?;
         let stored_allow = cur.as_ref().map(|p| p.allow_su);
         let allow = form
             .get("allowSu")
@@ -315,13 +322,19 @@ impl Backend for KsudBackend {
             }
             if let Some(v) = form.get("context") {
                 let d = v.trim();
-                if d.is_empty() || d.len() >= ksu_uapi::KSU_SELINUX_DOMAIN as usize || d.contains('\0') {
+                if d.is_empty()
+                    || d.len() >= ksu_uapi::KSU_SELINUX_DOMAIN as usize
+                    || d.contains('\0')
+                {
                     return Err("SELinux 域不能为空、也不能超过 63 个字符".to_string());
                 }
                 ksucalls::write_cstr(&mut rp.profile.selinux_domain, d);
             }
             if let Some(v) = form.get("namespace") {
-                let ns = v.trim().parse::<i32>().map_err(|_| "命名空间取值不合法".to_string())?;
+                let ns = v
+                    .trim()
+                    .parse::<i32>()
+                    .map_err(|_| "命名空间取值不合法".to_string())?;
                 if !(0..=2).contains(&ns) {
                     return Err("命名空间只能是 0(继承) / 1(全局) / 2(独立)".to_string());
                 }
@@ -362,8 +375,9 @@ impl Backend for KsudBackend {
     /// 超级用户日志：读 sulogd 落盘的文本（新的在前，支持关键字过滤）
     fn sulog(&self, limit: usize, query: &str) -> Value {
         let files = sulog_files();
-        let (enabled, supported) = ksucalls::get_feature(crate::feature::FeatureId::Sulog as u32)
-            .unwrap_or((0, false));
+        let state =
+            ksucalls::get_feature(crate::feature_id::FeatureId::Sulog as u32).unwrap_or_default();
+        let (enabled, supported) = (state.value, state.supported);
         let q = query.trim().to_lowercase();
         let mut lines: Vec<String> = Vec::new();
         for (_, path) in &files {
@@ -420,13 +434,11 @@ impl Backend for KsudBackend {
     /// 超级用户日志开关（内核 feature: sulog；打开时顺手把 sulogd 拉起来）
     fn set_sulog_enabled(&self, enable: bool) -> Result<String, String> {
         ksucalls::set_feature(
-            crate::feature::FeatureId::Sulog as u32,
+            crate::feature_id::FeatureId::Sulog as u32,
             u64::from(enable),
         )
         .map_err(|e| format!("切换失败: {e:#}"))?;
-        if enable
-            && let Err(e) = crate::sulog::ensure_sulogd_running()
-        {
+        if enable && let Err(e) = crate::sulog::ensure_sulogd_running() {
             warn!("拉起 sulogd 失败: {e:#}");
         }
         log_line(&format!(
@@ -494,10 +506,7 @@ impl Backend for KsudBackend {
     fn module_packages_info(&self, names_json: &str) -> Result<Value, String> {
         let names: Vec<String> = serde_json::from_str(names_json).unwrap_or_default();
         let list = module::packages_info(&names).map_err(|e| format!("{e:#}"))?;
-        log_line(&format!(
-            "网页：模块网页取 {} 个包的信息",
-            list.len()
-        ));
+        log_line(&format!("网页：模块网页取 {} 个包的信息", list.len()));
         Ok(json!({ "list": list }))
     }
 
@@ -581,9 +590,10 @@ impl Backend for KsudBackend {
                     bytes.push(b'\n');
                     let text = String::from_utf8_lossy(&bytes).to_string();
                     if let Ok(mut b) = buf.lock()
-                        && b.len() < 1024 * 1024 {
-                            b.push_str(&text);
-                        }
+                        && b.len() < 1024 * 1024
+                    {
+                        b.push_str(&text);
+                    }
                 }
             });
         }
@@ -593,7 +603,10 @@ impl Backend for KsudBackend {
             let code = code.clone();
             std::thread::spawn(move || {
                 let st = child.wait();
-                code.store(st.ok().and_then(|s| s.code()).unwrap_or(-1), Ordering::SeqCst);
+                code.store(
+                    st.ok().and_then(|s| s.code()).unwrap_or(-1),
+                    Ordering::SeqCst,
+                );
                 done.store(true, Ordering::SeqCst);
             });
         }
@@ -671,7 +684,11 @@ impl Backend for KsudBackend {
 
         let rel2 = {
             let t = rel.trim_start_matches('/');
-            if t.is_empty() { "index.html".to_string() } else { t.to_string() }
+            if t.is_empty() {
+                "index.html".to_string()
+            } else {
+                t.to_string()
+            }
         };
         // ① 目录穿越：先拼再规范化，规范完必须还在 webroot 里
         let mut target = root_c
@@ -751,7 +768,11 @@ impl Backend for KsudBackend {
 /// 首选端口被占时会顺延 —— 只显示 port 会骗人（2026-09-17 的误判来源之一）。
 fn real_port() -> u16 {
     let c = webadmin::Config::load();
-    let fallback = if c.bound_port > 0 { c.bound_port } else { c.port };
+    let fallback = if c.bound_port > 0 {
+        c.bound_port
+    } else {
+        c.port
+    };
     // 优先"真的在回话"的端口：配置里的 bound_port 可能是过期值
     webadmin::effective_port().unwrap_or(fallback)
 }
@@ -773,7 +794,11 @@ pub fn log_line(msg: &str) {
     if std::fs::metadata(LOG_PATH).is_ok_and(|m| m.len() > 64 * 1024) {
         let _ = std::fs::write(LOG_PATH, "");
     }
-    if let Ok(mut f) = std::fs::OpenOptions::new().create(true).append(true).open(LOG_PATH) {
+    if let Ok(mut f) = std::fs::OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open(LOG_PATH)
+    {
         use std::io::Write as _;
         let _ = writeln!(f, "[{ts}] {msg}");
     }
@@ -786,13 +811,19 @@ fn write_status(extra: &str) {
     let pid = read_pid().map_or_else(|| "无".to_string(), |p| p.to_string());
     // ⚠️ 以前这里写的是常量 PORT(18427)，改过端口后状态文件就是错的
     //    （2026-09-17 的误判来源之一）—— 现在以配置里的实际端口为准。
-    let real_port = if cfg.bound_port > 0 { cfg.bound_port } else { cfg.port };
+    let real_port = if cfg.bound_port > 0 {
+        cfg.bound_port
+    } else {
+        cfg.port
+    };
     let text = format!(
         "enabled={}\npid={}\nport={}\nksud={}\nnote={}\n",
         u8::from(cfg.enabled),
         pid,
         real_port,
-        std::env::current_exe().map(|p| p.display().to_string()).unwrap_or_default(),
+        std::env::current_exe()
+            .map(|p| p.display().to_string())
+            .unwrap_or_default(),
         extra
     );
     let _ = std::fs::write(STATUS_PATH, text);
@@ -847,7 +878,10 @@ pub fn serve_forever(port: Option<u16>) -> ! {
     // 而 force-stop（或 ROM 的"一键清理"）会把 App 的**整个 cgroup**端掉 ——
     // 于是 setsid、PPID=1 全都没用，服务照死。移到根 cgroup（init 那层）之后
     // 再 force-stop App，服务依然活着（2026-09-17 在设备上实测确认）。
-    match std::fs::write("/sys/fs/cgroup/cgroup.procs", std::process::id().to_string()) {
+    match std::fs::write(
+        "/sys/fs/cgroup/cgroup.procs",
+        std::process::id().to_string(),
+    ) {
         Ok(()) => log_line("已把自己移出 App 的 cgroup（force-stop 也杀不到）"),
         Err(e) => log_line(&format!("移出 cgroup 失败（可能被 force-stop 带走）: {e}")),
     }
@@ -886,7 +920,9 @@ fn is_listening() -> bool {
     // ⚠️ 必须把"用户自定义的端口"也算进来：只看固定的 4 个候选端口的话，
     //    用户把端口改成 18999 之后，这里的判断会一直说"没在跑"，
     //    于是 App 开关 / 开机钩子又会去拉一个新的 —— 越拉越乱（2026-09-17 的问题）。
-    candidate_ports(&cfg).iter().any(|p| webadmin::probe_own(*p))
+    candidate_ports(&cfg)
+        .iter()
+        .any(|p| webadmin::probe_own(*p))
 }
 
 /// 扫 /proc 找出所有 `ksud webadmin serve` 的 pid（给停/重启用）
@@ -1018,7 +1054,11 @@ pub fn sync_if_needed() -> anyhow::Result<bool> {
     let same = webadmin::ksud_same(&running.bin_sha, &disk_sha);
 
     // ③ 端口对不对？首选端口空着的话，就该待在首选端口上（这样地址才是那个固定地址）
-    let preferred = if cfg.port >= 1024 { cfg.port } else { webadmin::PORT };
+    let preferred = if cfg.port >= 1024 {
+        cfg.port
+    } else {
+        webadmin::PORT
+    };
     let on_preferred = running_port == preferred;
     let preferred_taken_by_other = webadmin::probe_ping(preferred).is_some();
 
@@ -1138,7 +1178,6 @@ fn short(sha: &str) -> String {
         format!("{}…", sha.chars().take(12).collect::<String>())
     }
 }
-
 
 /// 确保常驻进程在跑；返回是否（现在）在跑
 pub fn ensure_running() -> anyhow::Result<bool> {
@@ -1285,7 +1324,13 @@ fn kmi_of(release: &str) -> String {
     let major = release
         .split("android")
         .nth(1)
-        .and_then(|s| s.chars().take_while(char::is_ascii_digit).collect::<String>().parse::<u32>().ok())
+        .and_then(|s| {
+            s.chars()
+                .take_while(char::is_ascii_digit)
+                .collect::<String>()
+                .parse::<u32>()
+                .ok()
+        })
         .or(match ver.as_str() {
             "5.10" => Some(12),
             "5.15" => Some(13),
@@ -1308,10 +1353,18 @@ fn is_gki(release: &str) -> bool {
 }
 
 fn device_model() -> String {
-    for path in ["/system/build.prop", "/vendor/build.prop", "/system/system/build.prop"] {
+    for path in [
+        "/system/build.prop",
+        "/vendor/build.prop",
+        "/system/system/build.prop",
+    ] {
         if let Ok(text) = std::fs::read_to_string(path) {
             for line in text.lines() {
-                for key in ["ro.product.model=", "ro.product.vendor.model=", "ro.product.system.model="] {
+                for key in [
+                    "ro.product.model=",
+                    "ro.product.vendor.model=",
+                    "ro.product.system.model=",
+                ] {
                     if let Some(v) = line.strip_prefix(key) {
                         let v = v.trim();
                         if !v.is_empty() {
@@ -1332,7 +1385,8 @@ fn stealth_enabled() -> bool {
 
 /// 隐身密令（退出隐身用；只有拿到口令的本机页面能看）
 fn stealth_code() -> String {
-    std::fs::read_to_string("/data/adb/sevenk/stealth_code").map_or_else(|_| "70707".to_string(), |s| s.trim().to_string())
+    std::fs::read_to_string("/data/adb/sevenk/stealth_code")
+        .map_or_else(|_| "70707".to_string(), |s| s.trim().to_string())
 }
 
 /// 模块 id 列表（判空用）
@@ -1372,12 +1426,20 @@ fn uid_package_map() -> std::collections::HashMap<u32, String> {
 /// 带上密钥就等于把 root 通道一起发出去了。要完整地址请用 `ksud webadmin url`（只进 stdout）。
 pub fn status_text() -> String {
     let cfg = Config::load();
-    let port = if cfg.bound_port > 0 { cfg.bound_port } else { cfg.port };
+    let port = if cfg.bound_port > 0 {
+        cfg.bound_port
+    } else {
+        cfg.port
+    };
     format!(
         "enabled={} url=http://127.0.0.1:{port}{}/<专属密钥已隐藏> token={}",
         u8::from(cfg.enabled),
         webadmin::PATH,
-        if cfg.token.is_empty() { "无" } else { "已设置" },
+        if cfg.token.is_empty() {
+            "无"
+        } else {
+            "已设置"
+        },
     )
 }
 
@@ -1406,9 +1468,16 @@ pub fn set_enabled(enable: bool) -> anyhow::Result<()> {
 /// 也就不会因为重启而让端口顺延、用户地址漂移。
 pub fn reset_token_url() -> anyhow::Result<String> {
     let cfg = Config::load();
-    let port = if cfg.bound_port > 0 { cfg.bound_port } else { cfg.port };
+    let port = if cfg.bound_port > 0 {
+        cfg.bound_port
+    } else {
+        cfg.port
+    };
     let token = webadmin::reset_token()?;
-    Ok(webadmin::url_with(webadmin::effective_port().unwrap_or(port), &token))
+    Ok(webadmin::url_with(
+        webadmin::effective_port().unwrap_or(port),
+        &token,
+    ))
 }
 
 /// 让 `ksu_uapi` 的引用不被优化掉（ioctl 常量来自 bindgen）
@@ -1574,4 +1643,3 @@ fn log_key(name: &str) -> (String, u32) {
         _ => (stem.to_string(), 0),
     }
 }
-

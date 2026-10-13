@@ -17,7 +17,6 @@ use crate::defs::KSU_TEMP_BACKUP_DIR_NAME;
 use crate::{assets, boot_patch, defs, ksucalls, module, restorecon};
 #[allow(unused_imports)]
 use std::fs::{Permissions, set_permissions};
-#[cfg(unix)]
 use std::os::unix::prelude::PermissionsExt;
 
 use std::path::PathBuf;
@@ -128,7 +127,6 @@ pub fn ensure_binary<T: AsRef<Path>>(
     }
 
     write(&path, contents)?;
-    #[cfg(unix)]
     set_permissions(&path, Permissions::from_mode(0o755))?;
     Ok(())
 }
@@ -284,8 +282,8 @@ fn replace_file(src: &Path, dst: &Path) -> Result<()> {
     let tmp = dst.with_file_name(tmp_name);
 
     {
-        let mut file = File::create(&tmp)
-            .with_context(|| format!("failed to create {}", tmp.display()))?;
+        let mut file =
+            File::create(&tmp).with_context(|| format!("failed to create {}", tmp.display()))?;
         file.write_all(&bytes)
             .with_context(|| format!("failed to write {}", tmp.display()))?;
         file.sync_all()
@@ -293,8 +291,8 @@ fn replace_file(src: &Path, dst: &Path) -> Result<()> {
     }
 
     // 读回校验：写进去的必须和源一模一样。不一致 = 半成品，**保留旧文件**、删掉半成品后报错。
-    let written = std::fs::read(&tmp)
-        .with_context(|| format!("failed to read back {}", tmp.display()))?;
+    let written =
+        std::fs::read(&tmp).with_context(|| format!("failed to read back {}", tmp.display()))?;
     if written != bytes {
         cleanup_leftover(&tmp);
         bail!(
@@ -389,7 +387,8 @@ fn move_backup_verified(src: &Path, dst: &Path) -> Result<()> {
     if std::fs::rename(src, dst).is_ok() {
         return Ok(());
     }
-    std::fs::copy(src, dst).with_context(|| format!("copy {} -> {}", src.display(), dst.display()))?;
+    std::fs::copy(src, dst)
+        .with_context(|| format!("copy {} -> {}", src.display(), dst.display()))?;
     let original = std::fs::read(src).with_context(|| format!("read {}", src.display()))?;
     let moved = std::fs::read(dst).with_context(|| format!("read {}", dst.display()))?;
     if original != moved {

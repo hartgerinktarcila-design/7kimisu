@@ -63,7 +63,10 @@ mod tests {
     fn root_and_empty_path_are_an_error_not_a_panic() {
         for bad in ["/", ""] {
             let p = Path::new(bad);
-            assert!(p.parent().is_none(), "前提：{bad:?} 的 parent() 必须是 None");
+            assert!(
+                p.parent().is_none(),
+                "前提：{bad:?} 的 parent() 必须是 None"
+            );
             let e = script_work_dir(p);
             assert!(e.is_err(), "{bad:?} 必须报错（旧写法这里是 unwrap panic）");
             assert!(

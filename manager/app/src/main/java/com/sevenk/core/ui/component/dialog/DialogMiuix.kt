@@ -26,6 +26,7 @@ import androidx.navigationevent.compose.rememberNavigationEventState
 import com.sevenk.core.R
 import com.sevenk.core.ui.component.markdown.MarkdownContent
 import com.sevenk.core.ui.theme.miuixDialogColor
+import me.weishu.kernelsu.data.registry.RegistryUrls
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
 import top.yukonga.miuix.kmp.basic.InfiniteProgressIndicator
 import top.yukonga.miuix.kmp.basic.Text
@@ -94,8 +95,13 @@ fun ConfirmDialogMiuix(
                     val dismissState = LocalDismissState.current
                     visuals.content?.let { content ->
                         when {
+                            // Registry content (and any HTML, which only comes from the registry) is rendered locked down.
+                            visuals.isRestricted || visuals.isHtml -> MarkdownContent(
+                                content = content,
+                                isMarkdown = !visuals.isHtml,
+                                restrictedBaseUrl = RegistryUrls.DEFAULT_BASE_URL,
+                            )
                             visuals.isMarkdown -> MarkdownContent(content = content, isMarkdown = true)
-                            visuals.isHtml -> MarkdownContent(content = content, isMarkdown = false)
                             else -> Text(text = content)
                         }
                     }

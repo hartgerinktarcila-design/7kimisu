@@ -11,9 +11,6 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -52,7 +49,6 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -139,7 +135,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.Job
@@ -155,6 +150,7 @@ import com.sevenk.core.ui.component.ObserveAsEvents
 import com.sevenk.core.ui.component.ScrollToTopOnChange
 import com.sevenk.core.ui.component.dialog.rememberConfirmDialog
 import com.sevenk.core.ui.component.dialog.rememberLoadingDialog
+import com.sevenk.core.ui.theme.LocalModuleDescriptionMaxLines
 import com.sevenk.core.ui.theme.materialDialogColor
 import com.sevenk.core.ui.component.material.ExpressiveDialog
 import com.sevenk.core.ui.component.material.ExpressiveScaffold
@@ -261,6 +257,7 @@ fun ModulePagerMaterial(
                 html = it.html,
                 confirm = it.confirm,
                 dismiss = it.dismiss,
+                restricted = it.restricted,
             )
         }
     }
@@ -375,12 +372,6 @@ fun ModulePagerMaterial(
                         displayModules = uiState.searchResults,
                         updateInfoMap = uiState.updateInfo,
                         actions = actions,
-                        onClickModule = { module ->
-                            if (module.hasWebUi) {
-                                actions.onOpenWebUi(module)
-                                closeSearch()
-                            }
-                        },
                         onModuleAddShortcut = { module, type -> onModuleAddShortcut(module, type) },
                         closeSearch = closeSearch,
                     )
@@ -486,11 +477,6 @@ fun ModulePagerMaterial(
                 displayModules = uiState.moduleList,
                 updateInfoMap = uiState.updateInfo,
                 actions = actions,
-                onClickModule = { module ->
-                    if (module.hasWebUi) {
-                        actions.onOpenWebUi(module)
-                    }
-                },
                 onModuleAddShortcut = { module, type -> onModuleAddShortcut(module, type) },
             )
         }
@@ -521,7 +507,6 @@ private fun ModuleList(
     displayModules: List<Module>,
     updateInfoMap: Map<String, ModuleUpdateInfo>,
     actions: ModuleActions,
-    onClickModule: (Module) -> Unit,
     onModuleAddShortcut: (Module, ShortcutType) -> Unit,
     closeSearch: () -> Unit? = {},
 ) {
@@ -561,7 +546,11 @@ private fun ModuleList(
                     }
                 },
                 onAddShortcut = { type -> onModuleAddShortcut(module, type) },
-                onClick = { onClickModule(module) },
+                onOpenWebUi = {
+                    if (module.hasWebUi) {
+                        actions.onOpenWebUi(module)
+                    }
+                },
                 onExecuteAction = { actions.onExecuteModuleAction(module) },
                 closeSearch = { closeSearch() }
             )
@@ -732,7 +721,7 @@ private fun ModuleItem(
     onCheckChanged: (Boolean) -> Unit,
     onUpdate: () -> Unit,
     onAddShortcut: (ShortcutType) -> Unit,
-    onClick: () -> Unit,
+    onOpenWebUi: () -> Unit,
     onExecuteAction: () -> Unit,
     closeSearch: () -> Unit
 ) {
@@ -762,6 +751,14 @@ private fun ModuleItem(
         Modifier
     }
 
+    val hasDescription = module.description.isNotBlank()
+    val maxLinesLimit = LocalModuleDescriptionMaxLines.current
+    var expanded by rememberSaveable(module.id) { mutableStateOf(false) }
+    var descriptionCanExpand by rememberSaveable(module.id) { mutableStateOf(true) }
+    val canOpenWebUi = module.hasWebUi && !module.remove && module.enabled
+    val cardInteractionSource = remember { MutableInteractionSource() }
+    val descriptionInteractionSource = remember { MutableInteractionSource() }
+
     TonalCard(
         modifier = Modifier
             .fillMaxWidth()
@@ -770,31 +767,21 @@ private fun ModuleItem(
         // 有卡面时底色必须透明,否则会把图盖掉
         containerColor = if (art != null) Color.Transparent else cardContainer,
         contentColor = MaterialTheme.colorScheme.contentColorFor(cardContainer),
+        interactionSource = cardInteractionSource,
+        onClick = {
+            if (canOpenWebUi) {
+                onOpenWebUi()
+                closeSearch()
+            } else if (hasDescription) {
+                expanded = !expanded
+            }
+        }
     ) {
         val haptic = LocalHapticFeedback.current
         val textDecoration = if (!module.remove) null else TextDecoration.LineThrough
-        val interactionSource = remember { MutableInteractionSource() }
-        val indication = LocalIndication.current
-        var expanded by rememberSaveable(module.id) { mutableStateOf(false) }
-        var isOverflowing by remember { mutableStateOf(false) }
 
         Column(
-            modifier = Modifier
-                .run {
-                    if (module.hasWebUi) {
-                        toggleable(
-                            value = module.enabled,
-                            enabled = !module.remove && module.enabled,
-                            interactionSource = interactionSource,
-                            role = Role.Button,
-                            indication = indication,
-                            onValueChange = { onClick() }
-                        )
-                    } else {
-                        this
-                    }
-                }
-                .padding(16.dp, 14.dp, 16.dp, 10.dp)
+            modifier = Modifier.padding(16.dp, 14.dp, 16.dp, 10.dp)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -855,46 +842,43 @@ private fun ModuleItem(
                         onCheckedChange = {
                             haptic.performHapticFeedback(HapticFeedbackType.VirtualKey)
                             onCheckChanged(it)
-                        },
-                        interactionSource = if (!module.hasWebUi) interactionSource else remember { MutableInteractionSource() }
+                        }
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            if (hasDescription) {
+                Spacer(modifier = Modifier.height(8.dp))
 
-            Text(
-                modifier = Modifier
-                    .animateContentSize(
-                        animationSpec = tween(
-                            durationMillis = 250,
-                            easing = FastOutSlowInEasing
-                        )
-                    )
-                    .then(
-                        if (isOverflowing || expanded) {
-                            Modifier.clickable(
-                                interactionSource = remember { MutableInteractionSource() },
-                                indication = null
-                            ) { expanded = !expanded }
-                        } else {
-                            Modifier
-                        }
-                    ),
-                text = module.description,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyMedium,
-                overflow = if (expanded) TextOverflow.Clip else TextOverflow.Ellipsis,
-                maxLines = if (expanded) Int.MAX_VALUE else 4,
-                textDecoration = textDecoration,
-                onTextLayout = { textLayoutResult ->
-                    isOverflowing = if (expanded) {
-                        textLayoutResult.lineCount > 4
-                    } else {
-                        textLayoutResult.hasVisualOverflow
-                    }
-                }
-            )
+                ExpandableDescriptionText(
+                    text = module.description,
+                    expanded = expanded,
+                    maxLinesLimit = maxLinesLimit,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .then(
+                            if (canOpenWebUi) {
+                                Modifier.clickable(
+                                    interactionSource = descriptionInteractionSource,
+                                    indication = null
+                                ) {
+                                    if (descriptionCanExpand) {
+                                        expanded = !expanded
+                                    } else {
+                                        onOpenWebUi()
+                                        closeSearch()
+                                    }
+                                }
+                            } else {
+                                Modifier
+                            }
+                        ),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyMedium,
+                    textDecoration = textDecoration,
+                    onCanExpandChange = { descriptionCanExpand = it }
+                )
+            }
 
             Row(modifier = Modifier.padding(vertical = 4.dp)) {
                 if (module.metamodule) {
@@ -958,7 +942,7 @@ private fun ModuleItem(
                         if (module.hasWebUi) {
                             CombinedClickableButton(
                                 onClick = {
-                                    onClick()
+                                    onOpenWebUi()
                                     closeSearch()
                                 },
                                 onLongClick = { onAddShortcut(ShortcutType.WebUI) },

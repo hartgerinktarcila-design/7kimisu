@@ -20,5 +20,8 @@ data class MainActivityUiState(
     val trollRainSpeed: Float,
     val gravityEnabled: Boolean,
     val gravityMode: Int,
+    val enableSwipeDismiss: Boolean,
+    val pagerInterceptionMode: Int,
+    val moduleDescriptionMaxLines: Int = 4,
     val uiMode: UiMode,
 )

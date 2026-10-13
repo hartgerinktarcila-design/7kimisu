@@ -33,9 +33,10 @@ pub fn write_atomic(path: &Path, bytes: &[u8], mode: Option<u32>) -> std::io::Re
         return Err(std::io::Error::other("path has no parent directory"));
     };
     std::fs::create_dir_all(dir)?;
-    let base = path
-        .file_name()
-        .map_or_else(|| "atomic".to_string(), |n| n.to_string_lossy().into_owned());
+    let base = path.file_name().map_or_else(
+        || "atomic".to_string(),
+        |n| n.to_string_lossy().into_owned(),
+    );
     // 临时名带随机后缀：调用方可能是"每连接一个线程"的服务，固定名会让并发写互相截断
     let uniq = crate::webadmin::random_hex(8).unwrap_or_else(|| std::process::id().to_string());
     let tmp = dir.join(temp_name_for(&base, std::process::id(), &uniq));
@@ -157,7 +158,11 @@ mod tests {
     #[test]
     fn temp_name_shape_is_recognized_and_does_not_over_match() {
         // 写侧实际生成的名字（`temp_name_for` 与 `write_atomic` 共用同一个形状）
-        assert!(is_temp_name(&temp_name_for("com.foo.bar", 4242, "a1b2c3d4")));
+        assert!(is_temp_name(&temp_name_for(
+            "com.foo.bar",
+            4242,
+            "a1b2c3d4"
+        )));
         assert!(is_temp_name(&temp_name_for("tpl1", 7, "deadbeef")));
         // pid-only 兜底（拿不到 urandom 时）
         assert!(is_temp_name(&temp_name_for("tpl1", 7, "7")));

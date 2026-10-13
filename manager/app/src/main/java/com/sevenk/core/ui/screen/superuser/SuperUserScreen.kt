@@ -13,6 +13,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sevenk.core.ui.LocalUiMode
 import com.sevenk.core.ui.UiMode
+import com.sevenk.core.ui.component.SearchStatus
 import com.sevenk.core.ui.navigation3.Navigator
 import com.sevenk.core.ui.navigation3.Route
 import com.sevenk.core.ui.viewmodel.SuperUserViewModel
@@ -35,6 +36,8 @@ fun SuperUserPager(
                 viewModel.initializePreferences()
                 viewModel.loadAppList()
             }
+        } else if (!uiState.searchStatus.isCollapsed()) {
+            viewModel.updateSearchStatus(uiState.searchStatus.copy(searchText = "", current = SearchStatus.Status.COLLAPSED))
         }
     }
 

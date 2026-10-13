@@ -494,7 +494,7 @@ enum Profile {
 enum Feature {
     /// Get feature value and support status
     Get {
-        /// Feature ID or name (su_compat, kernel_umount, sulog, adb_root, selinux_hide)
+        /// Feature ID or name (su_compat, kernel_umount, sulog, adb_root, selinux_hide, shell_su_adb_only)
         id: String,
         /// Read from config file
         #[arg(long, default_value_t = false)]
@@ -512,9 +512,9 @@ enum Feature {
     /// List all available features
     List,
 
-    /// Check feature status (supported/unsupported/managed)
+    /// Check feature status (supported/unsupported/managed/forced)
     Check {
-        /// Feature ID or name (su_compat, kernel_umount, sulog, adb_root, selinux_hide)
+        /// Feature ID or name (su_compat, kernel_umount, sulog, adb_root, selinux_hide, shell_su_adb_only)
         id: String,
     },
 
@@ -662,7 +662,10 @@ pub fn run() -> Result<()> {
             Webadmin::Restart => {
                 crate::webadmin_ksud::set_enabled(true)?;
                 let ok = crate::webadmin_ksud::restart()?;
-                println!("网页管理器：已重启（{}）", if ok { "在跑" } else { "拉起失败" });
+                println!(
+                    "网页管理器：已重启（{}）",
+                    if ok { "在跑" } else { "拉起失败" }
+                );
                 Ok(())
             }
             Webadmin::Serve { port } => {
@@ -671,13 +674,13 @@ pub fn run() -> Result<()> {
             }
         },
 
-        Commands::PostFsData => init_event::on_post_data_fs(),
+        Commands::PostFsData => init_event::on_post_fs_data(),
         Commands::BootCompleted => {
             init_event::on_boot_completed();
             Ok(())
         }
 
-        Commands::SoftReboot => init_event::soft_reboot(),
+        Commands::SoftReboot => crate::soft_reboot::soft_reboot(),
 
         Commands::Insmod { module, params } => debug::insmod(&module, &params),
 

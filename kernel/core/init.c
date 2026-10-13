@@ -25,6 +25,8 @@
 #include "hook/syscall_hook.h"
 #include "feature/adb_root.h"
 #include "feature/selinux_hide.h"
+#include "feature/module_blacklist.h"
+#include "feature/shell_su_adb_only.h"
 #include "infra/symbol_resolver.h"
 
 #if defined(__x86_64__) && !defined(CONFIG_KSU_X86_PATCH_SYSCALL_DISPATCHER)
@@ -90,6 +92,7 @@ module_param_named(bundled, ksu_bundled, bool, 0);
 
 int __init kernelsu_init(void)
 {
+    pr_info("welcome to KernelSU version " __stringify(KERNEL_SU_VERSION) ", package name " KSU_PACKAGE_NAME "\n");
 #if defined(__x86_64__) && !defined(CONFIG_KSU_X86_PATCH_SYSCALL_DISPATCHER)
     // If the kernel has the hardening patch, X86_FEATURE_INDIRECT_SAFE must be set
     if (!boot_cpu_has(X86_FEATURE_INDIRECT_SAFE)) {
@@ -134,11 +137,15 @@ int __init kernelsu_init(void)
     ksu_init_symbol_resolver();
     ksu_syscall_hook_init();
 
+    // Block modules early, before vendor modules are loaded in second stage.
+    ksu_module_blacklist_init();
+
     ksu_feature_init();
     ksu_sulog_init();
     ksu_adb_root_init();
     ksu_lsm_hook_init();
     ksu_selinux_hide_init();
+    ksu_shell_su_adb_only_init();
 
     ksu_supercalls_init();
     ksu_app_profile_init();
@@ -166,6 +173,8 @@ int __init kernelsu_init(void)
 
         ksu_boot_completed = true;
         track_throne(false);
+
+        ksu_feature_apply_forced();
 
         if (!getenforce()) {
             pr_info("Permissive SELinux, enforcing\n");
@@ -212,11 +221,13 @@ void __exit kernelsu_exit(void)
 
     ksu_allowlist_exit();
 
+    ksu_shell_su_adb_only_exit();
     ksu_selinux_hide_exit();
     ksu_lsm_hook_exit();
     ksu_adb_root_exit();
     ksu_sulog_exit();
     ksu_feature_exit();
+    ksu_module_blacklist_exit();
 
     put_cred(ksu_cred);
 }

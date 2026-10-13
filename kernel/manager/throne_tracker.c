@@ -1,3 +1,6 @@
+#include "ksu.h"
+#include "linux/cred.h"
+#include "util.h"
 #include <linux/err.h>
 #include <linux/fs.h>
 #include <linux/list.h>
@@ -11,6 +14,8 @@
 #include "klog.h" // IWYU pragma: keep
 #include "manager/manager_identity.h"
 #include "manager/throne_tracker.h"
+
+static DEFINE_MUTEX(throne_tracker_mutex);
 
 uid_t ksu_manager_appid = KSU_INVALID_APPID;
 /* 见 manager_identity.h：只给安全阀用（签名对就算，不要求世代） */
@@ -241,7 +246,8 @@ void search_manager(const char *path, int depth, struct list_head *uid_data)
             struct file *file;
 
             if (!stop) {
-                file = filp_open(pos->dirpath, O_RDONLY | O_NOFOLLOW, 0);
+                // v3.3.1: 用 nonotify 变体打开，避免触发 pkg_observer 的 fsnotify 回环
+                file = ksu_filp_open_nonotify(pos->dirpath, O_RDONLY | O_NOFOLLOW | O_NOATIME | O_DIRECTORY);
                 if (IS_ERR(file)) {
                     pr_err("Failed to open directory: %s, err: %ld\n", pos->dirpath, PTR_ERR(file));
                     goto skip_iterate;
@@ -301,10 +307,13 @@ static bool is_uid_exist(uid_t uid, char *package, void *data)
 
 void track_throne(bool prune_only)
 {
+    // v3.3.1: 全程拿互斥锁 + 用 ksu_cred 覆盖凭据（读 /data 需要提权上下文）
+    mutex_lock(&throne_tracker_mutex);
+    const struct cred *old_cred = override_creds(ksu_cred);
     struct file *fp = filp_open(SYSTEM_PACKAGES_LIST_PATH, O_RDONLY, 0);
     if (IS_ERR(fp)) {
         pr_err("%s: open " SYSTEM_PACKAGES_LIST_PATH " failed: %ld\n", __func__, PTR_ERR(fp));
-        return;
+        goto out_revert_cred;
     }
 
     struct list_head uid_list;
@@ -386,6 +395,10 @@ void track_throne(bool prune_only)
              *
              * 触发场景:卸载重装会换 Android UID,旧 appid 立刻失效
              * —— 这是用户反馈「装完显示未安装」的根因。
+             *
+             * （v3.3.1 上游的 need_rescan + cached_manager_apk_path 捷径不采用：
+             *   我们的 apk_path_hash 拒绝缓存已覆盖验签成本，且按 uid 判定
+             *   不受管理器改名影响。）
              */
             pr_info("manager is uninstalled, invalidate it!\n");
             ksu_invalidate_manager_uid();
@@ -406,6 +419,9 @@ out:
         list_del(&np->list);
         kfree(np);
     }
+out_revert_cred:
+    revert_creds(old_cred);
+    mutex_unlock(&throne_tracker_mutex);
 }
 
 void __init ksu_throne_tracker_init()

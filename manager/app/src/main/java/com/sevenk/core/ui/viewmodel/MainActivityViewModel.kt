@@ -58,6 +58,9 @@ class MainActivityViewModel(
             trollRainSpeed = settingRepo.trollRainSpeed,
             gravityEnabled = settingRepo.gravityEnabled,
             gravityMode = settingRepo.gravityMode,
+            enableSwipeDismiss = settingRepo.enableSwipeDismiss,
+            pagerInterceptionMode = settingRepo.pagerInterceptionMode,
+            moduleDescriptionMaxLines = settingRepo.moduleDescriptionMaxLines,
             uiMode = UiMode.fromValue(settingRepo.uiMode),
         )
     }
@@ -69,6 +72,7 @@ class MainActivityViewModel(
             "color_style",
             "color_spec",
             "page_scale",
+            "module_description_max_lines",
             "enable_blur",
             "enable_floating_bottom_bar",
             "enable_floating_bottom_bar_blur",
@@ -81,6 +85,8 @@ class MainActivityViewModel(
             "troll_rain_speed",
             "gravity_enabled",
             "gravity_mode",
+            "enable_swipe_dismiss",
+            "pager_interception_mode",
             "ui_mode",
             // 个性化壁纸(改了要立刻重新组合,壁纸才会即时生效)
             "wallpaper_path",

@@ -1,9 +1,12 @@
 package com.sevenk.core.ui.util
 
 import android.net.Uri
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
+import me.weishu.kernelsu.data.registry.ExpectedFile
 import com.sevenk.core.ksuApp
 import com.sevenk.core.ui.util.module.LatestVersionInfo
 import okhttp3.Request
@@ -17,7 +20,9 @@ suspend fun download(
     fileName: String,
     onDownloaded: (Uri) -> Unit = {},
     onDownloading: () -> Unit = {},
-    onProgress: (Int) -> Unit = {}
+    onProgress: (Int) -> Unit = {},
+    expected: ExpectedFile? = null,
+    onFailed: (DownloadManager.DownloadState) -> Unit = {},
 ) {
     onDownloading()
 
@@ -26,6 +31,7 @@ suspend fun download(
         url = url,
         fileName = fileName,
         onCompleted = onDownloaded,
+        expected = expected,
     )
 
     // 🔴（v2.19）等"下载结束"必须带超时：旧写法 `.first { COMPLETED || FAILED }` 在
@@ -53,6 +59,16 @@ suspend fun download(
         DownloadManager.markFailed(downloadId, "timeout")
         android.util.Log.w(TAG, "download timeout(${DOWNLOAD_TIMEOUT_MS}ms), 按失败处理: $url")
     }
+    val finalState = finished?.get(downloadId) ?: DownloadManager.downloads.value[downloadId]
+    if (finalState?.status == DownloadManager.Status.FAILED) {
+        withContext(Dispatchers.Main) { onFailed(finalState) }
+    }
+}
+
+internal suspend fun isDownloadAvailable(uri: Uri): Boolean = withContext(Dispatchers.IO) {
+    runCatching {
+        ksuApp.contentResolver.openFileDescriptor(uri, "r").use { it != null }
+    }.getOrDefault(false)
 }
 
 private const val TAG = "Downloader"

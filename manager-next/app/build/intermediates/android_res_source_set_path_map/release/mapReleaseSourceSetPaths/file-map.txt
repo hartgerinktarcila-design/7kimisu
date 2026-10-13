@@ -1,0 +1,10 @@
+com.sevenk.core.app-pngs-0 /Users/7kimimasy/7kimisu/manager-next/app/build/generated/res/pngs/release
+com.sevenk.core.app-resValues-1 /Users/7kimimasy/7kimisu/manager-next/app/build/generated/res/resValues/release
+com.sevenk.core.app-updated_navigation_xml-2 /Users/7kimimasy/7kimisu/manager-next/app/build/generated/updated_navigation_xml/release
+com.sevenk.core.app-packageReleaseResources-3 /Users/7kimimasy/7kimisu/manager-next/app/build/intermediates/incremental/release/packageReleaseResources/merged.dir
+com.sevenk.core.app-packageReleaseResources-4 /Users/7kimimasy/7kimisu/manager-next/app/build/intermediates/incremental/release/packageReleaseResources/stripped.dir
+com.sevenk.core.app-merged-not-compiled-resources-5 /Users/7kimimasy/7kimisu/manager-next/app/build/intermediates/merged-not-compiled-resources/release
+com.sevenk.core.app-release-6 /Users/7kimimasy/7kimisu/manager-next/app/build/intermediates/merged_res/release/mergeReleaseResources
+com.sevenk.core.app-main-7 /Users/7kimimasy/7kimisu/manager-next/app/src/main/res
+com.sevenk.core.app-release-8 /Users/7kimimasy/7kimisu/manager-next/app/src/release/res
+gradleHome-0 /Users/7kimimasy/.gradle

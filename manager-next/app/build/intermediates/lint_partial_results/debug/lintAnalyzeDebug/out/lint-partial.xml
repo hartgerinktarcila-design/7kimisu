@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<incidents format="6" by="lint 9.4.1" type="partial_results">
+    <map id="NotificationPermission">
+        <entry
+            name="source"
+            boolean="true"/>
+    </map>
+    <map id="UnsafeIntentLaunch">
+            <map id="unprotected">
+                <entry
+                    name="com.sevenk.core.security.StealthReceiver"
+                    boolean="true"/>
+                <entry
+                    name="com.sevenk.core.ui.MainActivity"
+                    boolean="true"/>
+            </map>
+    </map>
+    <map id="UnusedResources">
+        <location id="R.drawable.art_default"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/drawable-nodpi/art_default.jpg"/>
+        <location id="R.drawable.ic_launcher_monochrome"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/drawable/ic_launcher_monochrome.xml"
+            line="2"
+            column="1"
+            startOffset="39"
+            endLine="22"
+            endColumn="10"
+            endOffset="733"/>
+        <location id="R.drawable.troll_face"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/drawable-nodpi/troll_face.png"/>
+        <location id="R.drawable.wallpaper_default_landscape"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/drawable-nodpi/wallpaper_default_landscape.jpg"/>
+        <location id="R.drawable.wallpaper_default_portrait"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/drawable-nodpi/wallpaper_default_portrait.jpg"/>
+        <location id="R.style.Theme_KernelSU_WebUI"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values/themes.xml"
+            line="16"
+            column="12"
+            startOffset="736"
+            endLine="16"
+            endColumn="39"
+            endOffset="763"/>
+        <location id="R.xml.filepaths"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/xml/filepaths.xml"
+            line="3"
+            column="1"
+            startOffset="40"
+            endLine="5"
+            endColumn="9"
+            endOffset="96"/>
+        <entry
+            name="model"
+            string="animator[anim_outline_horizontal(U),anim_outline_vertical(U),anim_square_path(U),anim_square_path_rev(U)],color[ic_splash_background(U),ic_launcher_foreground(U),ic_launcher_background(U)],drawable[ic_launcher_monochrome(D),ic_launcher_splash(U),ic_logo_vector(U),ic_launcher_foreground(U),art_default(D),troll_face(D),wallpaper_default_landscape(D),wallpaper_default_portrait(D)],mipmap[ic_launcher(U)],string[app_name(U),home(U),superuser(U),module(U),settings(U),about(U),ok(U),cancel(U),back(U),uninstall(U),reboot(U),reboot_failed(U),reboot_to_apply(U),home_working(U),home_working_version(U),home_not_installed(U),home_click_to_install(U),home_unsupported(U),home_unsupported_reason(U),home_can_install(U),home_can_install_summary(U),home_manager_not_recognized(U),home_manager_not_recognized_title(U),home_manager_not_recognized_detail(U),home_install_kernel(U),home_install_kernel_summary(U),home_manager_version(U),home_kernel(U),home_device_model(U),home_fingerprint(U),home_selinux_status(U),home_seccomp_status(U),home_stealth_status(U),home_stealth_on(U),home_stealth_off(U),home_stealth_unknown(U),home_uapi_version(U),home_uapi_version_value(U),safe_mode(U),jailbreak_mode(U),selinux_status_enforcing(U),selinux_status_permissive(U),selinux_status_disabled(U),selinux_status_unknown(U),seccomp_status_not_supported(U),seccomp_status_disabled(U),seccomp_status_strict(U),seccomp_status_filter(U),seccomp_status_unknown(U),show_system_apps(U),superuser_empty(U),module_install(U),module_install_failed(U),module_empty(U),module_version(U),module_author(U),module_uninstall_confirm(U),module_uninstall_success(U),module_uninstall_failed(U),module_undo_uninstall(U),module_failed_to_enable(U),module_failed_to_disable(U),flash_title(U),flash_select_file(U),flash_select_file_summary(U),flash_direct_install(U),flash_direct_install_summary(U),flash_install_inactive_slot(U),flash_install_inactive_slot_summary(U),flash_allow_shell(U),flash_allow_shell_summary(U),flash_enable_adb(U),flash_enable_adb_summary(U),flash_force_backup(U),flash_force_backup_summary(U),flash_start(U),flash_failed(U),flash_open_image_failed(U),flash_empty_image(U),settings_theme(U),settings_theme_summary(U),theme_system(U),theme_light(U),theme_dark(U),settings_stealth(U),settings_stealth_summary(U),settings_stealth_code(U),settings_stealth_confirm_title(U),settings_stealth_confirm_content(U),settings_stealth_confirm_yes(U),settings_stealth_code_too_short(U),settings_stealth_toggle_failed(U),settings_sulog(U),settings_sulog_summary(U),settings_adb_root(U),settings_adb_root_summary(U),settings_selinux_hide(U),settings_selinux_hide_summary(U),settings_selinux_hide_reboot_required(U),settings_selinux_hide_failed(U),settings_shell_su_adb_only(U),settings_shell_su_adb_only_summary(U),feature_status_unsupported_summary(U),feature_status_unreadable_summary(U),feature_status_managed_summary(U),about_summary(U),about_uapi(U),about_source_code(U),about_learn_kernelsu(U),about_license_title(U),about_license_summary(U),about_fork_note(U),stealth_restore_not_enabled(U),stealth_restore_disabled(U),stealth_restore_foreign_kernel(U),stealth_restore_kernel_too_old(U),stealth_restore_not_recognized(U),ksud_install_failed(U),profile_flags_desc_no_new_privs(U)],style[Theme_KernelSU(U),Theme_KernelSU_Starting(U),Theme_SplashScreen(R),Theme_KernelSU_WebUI(D)],xml[data_extraction_rules(U),backup_rules(U),network_security_config(U),filepaths(D)];8^9^0^1^2^3,9^4^5,f^6^a,88^89^4^8^87,8a^87;;;"/>
+    </map>
+
+</incidents>

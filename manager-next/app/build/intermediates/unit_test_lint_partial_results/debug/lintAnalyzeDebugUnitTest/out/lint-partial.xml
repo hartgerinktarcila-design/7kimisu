@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<incidents format="6" by="lint 9.4.1" type="partial_results">
+    <map id="UnusedResources">
+        <location id="R.string.app_name"
+            file="${:app*projectDir}/build.gradle.kts"/>
+        <entry
+            name="model"
+            string="string[app_name(D)];;;;"/>
+    </map>
+
+</incidents>

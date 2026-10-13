@@ -1,0 +1,268 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.sevenk.core"
+4    android:versionCode="3000000"
+5    android:versionName="v3.0.0" >
+6
+7    <uses-sdk
+7-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:10:5-68
+8        android:minSdkVersion="31"
+8-->INJECTED
+9        android:targetSdkVersion="37" />
+9-->INJECTED
+10
+11    <uses-permission android:name="android.permission.INTERNET" />
+11-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:5:5-67
+11-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:5:22-64
+12    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+12-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:6:5-79
+12-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:6:22-76
+13    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+13-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:7:5-81
+13-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:7:22-78
+14    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+14-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:8:5-77
+14-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:8:22-74
+15
+16    <permission
+16-->[androidx.core:core:1.18.0] /Users/7kimimasy/.gradle/caches/9.7.1/transforms/da877c75d11c825957bbce046dae9926/transformed/core-1.18.0/AndroidManifest.xml:22:5-24:47
+17        android:name="com.sevenk.core.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+17-->[androidx.core:core:1.18.0] /Users/7kimimasy/.gradle/caches/9.7.1/transforms/da877c75d11c825957bbce046dae9926/transformed/core-1.18.0/AndroidManifest.xml:23:9-81
+18        android:protectionLevel="signature" />
+18-->[androidx.core:core:1.18.0] /Users/7kimimasy/.gradle/caches/9.7.1/transforms/da877c75d11c825957bbce046dae9926/transformed/core-1.18.0/AndroidManifest.xml:24:9-44
+19
+20    <uses-permission android:name="com.sevenk.core.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+20-->[androidx.core:core:1.18.0] /Users/7kimimasy/.gradle/caches/9.7.1/transforms/da877c75d11c825957bbce046dae9926/transformed/core-1.18.0/AndroidManifest.xml:26:5-97
+20-->[androidx.core:core:1.18.0] /Users/7kimimasy/.gradle/caches/9.7.1/transforms/da877c75d11c825957bbce046dae9926/transformed/core-1.18.0/AndroidManifest.xml:26:22-94
+21
+22    <application
+22-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:12:5-81:19
+23        android:name="com.sevenk.core.SevenkApplication"
+23-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:13:9-42
+24        android:allowBackup="true"
+24-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:14:9-35
+25        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+25-->[androidx.core:core:1.18.0] /Users/7kimimasy/.gradle/caches/9.7.1/transforms/da877c75d11c825957bbce046dae9926/transformed/core-1.18.0/AndroidManifest.xml:28:18-86
+26        android:dataExtractionRules="@xml/data_extraction_rules"
+26-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:15:9-65
+27        android:directBootAware="true"
+27-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:16:9-39
+28        android:extractNativeLibs="true"
+28-->INJECTED
+29        android:fullBackupContent="@xml/backup_rules"
+29-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:17:9-54
+30        android:hasFragileUserData="true"
+30-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:18:9-42
+31        android:icon="@mipmap/ic_launcher"
+31-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:19:9-43
+32        android:label="@string/app_name"
+32-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:20:9-41
+33        android:networkSecurityConfig="@xml/network_security_config"
+33-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:21:9-69
+34        android:supportsRtl="true"
+34-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:22:9-35
+35        android:theme="@style/Theme.KernelSU" >
+35-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:23:9-46
+36        <activity
+36-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:24:9-45:20
+37            android:name="com.sevenk.core.ui.MainActivity"
+37-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:25:13-44
+38            android:exported="true"
+38-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:26:13-36
+39            android:theme="@style/Theme.KernelSU.Starting"
+39-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:27:13-59
+40            android:windowSoftInputMode="adjustResize" >
+40-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:28:13-55
+41            <intent-filter>
+41-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:29:13-36:29
+42                <action android:name="android.intent.action.VIEW" />
+42-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:30:17-69
+42-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:30:25-66
+43
+44                <category android:name="android.intent.category.DEFAULT" />
+44-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:31:17-76
+44-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:31:27-73
+45                <category android:name="android.intent.category.BROWSABLE" />
+45-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:32:17-78
+45-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:32:27-75
+46
+47                <data
+47-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:33:17-35:48
+48                    android:mimeType="application/zip"
+48-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:34:21-55
+49                    android:scheme="content" />
+49-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:35:21-45
+50            </intent-filter>
+51            <intent-filter>
+51-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:37:13-44:29
+52                <action android:name="android.intent.action.VIEW" />
+52-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:30:17-69
+52-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:30:25-66
+53
+54                <category android:name="android.intent.category.DEFAULT" />
+54-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:31:17-76
+54-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:31:27-73
+55                <category android:name="android.intent.category.BROWSABLE" />
+55-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:32:17-78
+55-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:32:27-75
+56
+57                <data
+57-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:33:17-35:48
+58                    android:host="webui"
+58-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:42:21-41
+59                    android:scheme="ksu" />
+59-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:35:21-45
+60            </intent-filter>
+61        </activity> <!-- 桌面入口别名：隐身二级通过禁用它隐藏图标；MainActivity 仍可被密令拉起 -->
+62        <activity-alias
+62-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:48:9-59:26
+63            android:name="com.sevenk.core.ui.LauncherAlias"
+63-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:49:13-45
+64            android:enabled="true"
+64-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:50:13-35
+65            android:exported="true"
+65-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:51:13-36
+66            android:icon="@mipmap/ic_launcher"
+66-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:52:13-47
+67            android:label="@string/app_name"
+67-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:53:13-45
+68            android:targetActivity="com.sevenk.core.ui.MainActivity" >
+68-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:54:13-54
+69            <intent-filter>
+69-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:55:13-58:29
+70                <action android:name="android.intent.action.MAIN" />
+70-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:56:17-69
+70-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:56:25-66
+71
+72                <category android:name="android.intent.category.LAUNCHER" />
+72-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:57:17-77
+72-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:57:27-74
+73            </intent-filter>
+74        </activity-alias>
+75
+76        <!--
+77             拨号盘密令：故意只声明 scheme 不写 host，任何数字都送到 receiver，
+78             由代码与设置里的密令比对，不匹配就静默忽略
+79        -->
+80        <receiver
+80-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:63:9-70:20
+81            android:name="com.sevenk.core.security.StealthReceiver"
+81-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:64:13-53
+82            android:exported="true" >
+82-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:65:13-36
+83            <intent-filter>
+83-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:66:13-69:29
+84                <action android:name="android.provider.Telephony.SECRET_CODE" />
+84-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:67:17-81
+84-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:67:25-78
+85
+86                <data android:scheme="android_secret_code" />
+86-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:33:17-35:48
+86-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:35:21-45
+87            </intent-filter>
+88        </receiver>
+89
+90        <!-- 开机后按内核状态重新同步桌面图标 -->
+91        <receiver
+91-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:73:9-80:20
+92            android:name="com.sevenk.core.security.StealthBootReceiver"
+92-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:74:13-57
+93            android:directBootAware="true"
+93-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:75:13-43
+94            android:exported="false" >
+94-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:76:13-37
+95            <intent-filter>
+95-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:77:13-79:29
+96                <action android:name="android.intent.action.BOOT_COMPLETED" />
+96-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:78:17-79
+96-->/Users/7kimimasy/7kimisu/manager-next/app/src/main/AndroidManifest.xml:78:25-76
+97            </intent-filter>
+98        </receiver>
+99
+100        <provider
+100-->[androidx.emoji2:emoji2:1.4.0] /Users/7kimimasy/.gradle/caches/9.7.1/transforms/f7dd26240ae227b926febe4ac8a3041b/transformed/emoji2-1.4.0/AndroidManifest.xml:24:9-32:20
+101            android:name="androidx.startup.InitializationProvider"
+101-->[androidx.emoji2:emoji2:1.4.0] /Users/7kimimasy/.gradle/caches/9.7.1/transforms/f7dd26240ae227b926febe4ac8a3041b/transformed/emoji2-1.4.0/AndroidManifest.xml:25:13-67
+102            android:authorities="com.sevenk.core.androidx-startup"
+102-->[androidx.emoji2:emoji2:1.4.0] /Users/7kimimasy/.gradle/caches/9.7.1/transforms/f7dd26240ae227b926febe4ac8a3041b/transformed/emoji2-1.4.0/AndroidManifest.xml:26:13-68
+103            android:exported="false" >
+103-->[androidx.emoji2:emoji2:1.4.0] /Users/7kimimasy/.gradle/caches/9.7.1/transforms/f7dd26240ae227b926febe4ac8a3041b/transformed/emoji2-1.4.0/AndroidManifest.xml:27:13-37
+104            <meta-data
+104-->[androidx.emoji2:emoji2:1.4.0] /Users/7kimimasy/.gradle/caches/9.7.1/transforms/f7dd26240ae227b926febe4ac8a3041b/transformed/emoji2-1.4.0/AndroidManifest.xml:29:13-31:52
+105                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+105-->[androidx.emoji2:emoji2:1.4.0] /Users/7kimimasy/.gradle/caches/9.7.1/transforms/f7dd26240ae227b926febe4ac8a3041b/transformed/emoji2-1.4.0/AndroidManifest.xml:30:17-75
+106                android:value="androidx.startup" />
+106-->[androidx.emoji2:emoji2:1.4.0] /Users/7kimimasy/.gradle/caches/9.7.1/transforms/f7dd26240ae227b926febe4ac8a3041b/transformed/emoji2-1.4.0/AndroidManifest.xml:31:17-49
+107            <meta-data
+107-->[androidx.lifecycle:lifecycle-process:2.11.0] /Users/7kimimasy/.gradle/caches/9.7.1/transforms/60aa9fa2b2facdd5f9f1872621f4f2f7/transformed/lifecycle-process-2.11.0/AndroidManifest.xml:29:13-31:52
+108                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+108-->[androidx.lifecycle:lifecycle-process:2.11.0] /Users/7kimimasy/.gradle/caches/9.7.1/transforms/60aa9fa2b2facdd5f9f1872621f4f2f7/transformed/lifecycle-process-2.11.0/AndroidManifest.xml:30:17-78
+109                android:value="androidx.startup" />
+109-->[androidx.lifecycle:lifecycle-process:2.11.0] /Users/7kimimasy/.gradle/caches/9.7.1/transforms/60aa9fa2b2facdd5f9f1872621f4f2f7/transformed/lifecycle-process-2.11.0/AndroidManifest.xml:31:17-49
+110            <meta-data
+110-->[com.squareup.okhttp3:okhttp-android:5.5.0] /Users/7kimimasy/.gradle/caches/9.7.1/transforms/7c8e55b8e50561fea089a88380effe71/transformed/okhttp/AndroidManifest.xml:16:13-18:52
+111                android:name="okhttp3.internal.platform.PlatformInitializer"
+111-->[com.squareup.okhttp3:okhttp-android:5.5.0] /Users/7kimimasy/.gradle/caches/9.7.1/transforms/7c8e55b8e50561fea089a88380effe71/transformed/okhttp/AndroidManifest.xml:17:17-77
+112                android:value="androidx.startup" />
+112-->[com.squareup.okhttp3:okhttp-android:5.5.0] /Users/7kimimasy/.gradle/caches/9.7.1/transforms/7c8e55b8e50561fea089a88380effe71/transformed/okhttp/AndroidManifest.xml:18:17-49
+113            <meta-data
+113-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/7kimimasy/.gradle/caches/9.7.1/transforms/2653d82cf6a47aad76f0c1b26b28abbc/transformed/profileinstaller-1.4.0/AndroidManifest.xml:29:13-31:52
+114                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+114-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/7kimimasy/.gradle/caches/9.7.1/transforms/2653d82cf6a47aad76f0c1b26b28abbc/transformed/profileinstaller-1.4.0/AndroidManifest.xml:30:17-85
+115                android:value="androidx.startup" />
+115-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/7kimimasy/.gradle/caches/9.7.1/transforms/2653d82cf6a47aad76f0c1b26b28abbc/transformed/profileinstaller-1.4.0/AndroidManifest.xml:31:17-49
+116        </provider>
+117
+118        <uses-library
+118-->[androidx.window:window:1.5.0] /Users/7kimimasy/.gradle/caches/9.7.1/transforms/99aa6e130ea9bd587f8fcfff30fe8d2a/transformed/window-1.5.0/AndroidManifest.xml:23:9-25:40
+119            android:name="androidx.window.extensions"
+119-->[androidx.window:window:1.5.0] /Users/7kimimasy/.gradle/caches/9.7.1/transforms/99aa6e130ea9bd587f8fcfff30fe8d2a/transformed/window-1.5.0/AndroidManifest.xml:24:13-54
+120            android:required="false" />
+120-->[androidx.window:window:1.5.0] /Users/7kimimasy/.gradle/caches/9.7.1/transforms/99aa6e130ea9bd587f8fcfff30fe8d2a/transformed/window-1.5.0/AndroidManifest.xml:25:13-37
+121        <uses-library
+121-->[androidx.window:window:1.5.0] /Users/7kimimasy/.gradle/caches/9.7.1/transforms/99aa6e130ea9bd587f8fcfff30fe8d2a/transformed/window-1.5.0/AndroidManifest.xml:26:9-28:40
+122            android:name="androidx.window.sidecar"
+122-->[androidx.window:window:1.5.0] /Users/7kimimasy/.gradle/caches/9.7.1/transforms/99aa6e130ea9bd587f8fcfff30fe8d2a/transformed/window-1.5.0/AndroidManifest.xml:27:13-51
+123            android:required="false" />
+123-->[androidx.window:window:1.5.0] /Users/7kimimasy/.gradle/caches/9.7.1/transforms/99aa6e130ea9bd587f8fcfff30fe8d2a/transformed/window-1.5.0/AndroidManifest.xml:28:13-37
+124
+125        <receiver
+125-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/7kimimasy/.gradle/caches/9.7.1/transforms/2653d82cf6a47aad76f0c1b26b28abbc/transformed/profileinstaller-1.4.0/AndroidManifest.xml:34:9-52:20
+126            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+126-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/7kimimasy/.gradle/caches/9.7.1/transforms/2653d82cf6a47aad76f0c1b26b28abbc/transformed/profileinstaller-1.4.0/AndroidManifest.xml:35:13-76
+127            android:directBootAware="false"
+127-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/7kimimasy/.gradle/caches/9.7.1/transforms/2653d82cf6a47aad76f0c1b26b28abbc/transformed/profileinstaller-1.4.0/AndroidManifest.xml:36:13-44
+128            android:enabled="true"
+128-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/7kimimasy/.gradle/caches/9.7.1/transforms/2653d82cf6a47aad76f0c1b26b28abbc/transformed/profileinstaller-1.4.0/AndroidManifest.xml:37:13-35
+129            android:exported="true"
+129-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/7kimimasy/.gradle/caches/9.7.1/transforms/2653d82cf6a47aad76f0c1b26b28abbc/transformed/profileinstaller-1.4.0/AndroidManifest.xml:38:13-36
+130            android:permission="android.permission.DUMP" >
+130-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/7kimimasy/.gradle/caches/9.7.1/transforms/2653d82cf6a47aad76f0c1b26b28abbc/transformed/profileinstaller-1.4.0/AndroidManifest.xml:39:13-57
+131            <intent-filter>
+131-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/7kimimasy/.gradle/caches/9.7.1/transforms/2653d82cf6a47aad76f0c1b26b28abbc/transformed/profileinstaller-1.4.0/AndroidManifest.xml:40:13-42:29
+132                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+132-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/7kimimasy/.gradle/caches/9.7.1/transforms/2653d82cf6a47aad76f0c1b26b28abbc/transformed/profileinstaller-1.4.0/AndroidManifest.xml:41:17-91
+132-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/7kimimasy/.gradle/caches/9.7.1/transforms/2653d82cf6a47aad76f0c1b26b28abbc/transformed/profileinstaller-1.4.0/AndroidManifest.xml:41:25-88
+133            </intent-filter>
+134            <intent-filter>
+134-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/7kimimasy/.gradle/caches/9.7.1/transforms/2653d82cf6a47aad76f0c1b26b28abbc/transformed/profileinstaller-1.4.0/AndroidManifest.xml:43:13-45:29
+135                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+135-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/7kimimasy/.gradle/caches/9.7.1/transforms/2653d82cf6a47aad76f0c1b26b28abbc/transformed/profileinstaller-1.4.0/AndroidManifest.xml:44:17-85
+135-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/7kimimasy/.gradle/caches/9.7.1/transforms/2653d82cf6a47aad76f0c1b26b28abbc/transformed/profileinstaller-1.4.0/AndroidManifest.xml:44:25-82
+136            </intent-filter>
+137            <intent-filter>
+137-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/7kimimasy/.gradle/caches/9.7.1/transforms/2653d82cf6a47aad76f0c1b26b28abbc/transformed/profileinstaller-1.4.0/AndroidManifest.xml:46:13-48:29
+138                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+138-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/7kimimasy/.gradle/caches/9.7.1/transforms/2653d82cf6a47aad76f0c1b26b28abbc/transformed/profileinstaller-1.4.0/AndroidManifest.xml:47:17-88
+138-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/7kimimasy/.gradle/caches/9.7.1/transforms/2653d82cf6a47aad76f0c1b26b28abbc/transformed/profileinstaller-1.4.0/AndroidManifest.xml:47:25-85
+139            </intent-filter>
+140            <intent-filter>
+140-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/7kimimasy/.gradle/caches/9.7.1/transforms/2653d82cf6a47aad76f0c1b26b28abbc/transformed/profileinstaller-1.4.0/AndroidManifest.xml:49:13-51:29
+141                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+141-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/7kimimasy/.gradle/caches/9.7.1/transforms/2653d82cf6a47aad76f0c1b26b28abbc/transformed/profileinstaller-1.4.0/AndroidManifest.xml:50:17-95
+141-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/7kimimasy/.gradle/caches/9.7.1/transforms/2653d82cf6a47aad76f0c1b26b28abbc/transformed/profileinstaller-1.4.0/AndroidManifest.xml:50:25-92
+142            </intent-filter>
+143        </receiver>
+144    </application>
+145
+146</manifest>

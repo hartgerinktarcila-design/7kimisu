@@ -1,0 +1,22 @@
+#!/bin/sh
+'/Users/7kimimasy/opt/jdk21/Contents/Home/bin/java' \
+  '--enable-native-access' \
+  'ALL-UNNAMED' \
+  '--class-path' \
+  '/Users/7kimimasy/.gradle/caches/modules-2/files-2.1/com.google.prefab/cli/2.1.0/aa32fec809c44fa531f01dcfb739b5b3304d3050/cli-2.1.0-all.jar' \
+  'com.google.prefab.cli.AppKt' \
+  '--build-system' \
+  'cmake' \
+  '--platform' \
+  'android' \
+  '--abi' \
+  'arm64-v8a' \
+  '--os-version' \
+  '31' \
+  '--stl' \
+  'none' \
+  '--ndk-version' \
+  '29' \
+  '--output' \
+  '/var/folders/lz/y99s7cz10v160vqcllz366x00000gn/T/agp-prefab-staging4285452151713274837/staged-cli-output' \
+  '/Users/7kimimasy/.gradle/caches/9.7.1/transforms/6d312d6cb720be371d61c4122877a161/transformed/libcxx-29.0.14206865/prefab'

@@ -1,0 +1,17 @@
+[
+{
+  "message": "Start JSON generation. Platform version: 31 min SDK version: x86_64",
+  "file": "/Users/7kimimasy/7kimisu/manager/app/src/main/cpp/CMakeLists.txt",
+  "tag": "debug|x86_64"
+},
+{
+  "message": "JSON \u0027/Users/7kimimasy/7kimisu/manager-next/app/.cxx/Debug/f4k6076y/x86_64/android_gradle_build.json\u0027 was up-to-date",
+  "file": "/Users/7kimimasy/7kimisu/manager/app/src/main/cpp/CMakeLists.txt",
+  "tag": "debug|x86_64"
+},
+{
+  "message": "JSON generation completed without problems",
+  "file": "/Users/7kimimasy/7kimisu/manager/app/src/main/cpp/CMakeLists.txt",
+  "tag": "debug|x86_64"
+}
+]

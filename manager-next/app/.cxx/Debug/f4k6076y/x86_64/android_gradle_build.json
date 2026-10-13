@@ -1,0 +1,45 @@
+{
+  "buildFiles": [
+    "/Users/7kimimasy/7kimisu/manager/app/src/main/cpp/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/Users/7kimimasy/opt/android-sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/Users/7kimimasy/7kimisu/manager-next/app/.cxx/Debug/f4k6076y/x86_64",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/Users/7kimimasy/opt/android-sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/Users/7kimimasy/7kimisu/manager-next/app/.cxx/Debug/f4k6076y/x86_64",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {
+    "adbroot::@6890427a1f51a3e7e1df": {
+      "toolchain": "toolchain",
+      "abi": "x86_64",
+      "artifactName": "adbroot",
+      "output": "/Users/7kimimasy/7kimisu/manager-next/app/build/intermediates/cxx/Debug/f4k6076y/obj/x86_64/libadbroot.so",
+      "runtimeFiles": []
+    },
+    "sevenk::@6890427a1f51a3e7e1df": {
+      "toolchain": "toolchain",
+      "abi": "x86_64",
+      "artifactName": "sevenk",
+      "output": "/Users/7kimimasy/7kimisu/manager-next/app/build/intermediates/cxx/Debug/f4k6076y/obj/x86_64/libsevenk.so",
+      "runtimeFiles": []
+    }
+  },
+  "toolchains": {
+    "toolchain": {
+      "cCompilerExecutable": "/Users/7kimimasy/opt/android-sdk/ndk/29.0.14206865/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang.lld",
+      "cppCompilerExecutable": "/Users/7kimimasy/opt/android-sdk/ndk/29.0.14206865/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++.lld"
+    }
+  },
+  "cFileExtensions": [],
+  "cppFileExtensions": [
+    "cc"
+  ]
+}

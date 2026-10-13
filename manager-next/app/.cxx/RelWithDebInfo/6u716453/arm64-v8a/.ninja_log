@@ -1,0 +1,6 @@
+# ninja log v5
+0	119	1791913596653699793	CMakeFiles/sevenk.dir/ksu.cc.o	ab3e61e90c47d267
+0	176	1791913596710312637	CMakeFiles/sevenk.dir/jni.cc.o	c858075f4bbcef7e
+177	214	1791913596748544715	/Users/7kimimasy/7kimisu/manager-next/app/build/intermediates/cxx/RelWithDebInfo/6u716453/obj/arm64-v8a/libsevenk.so	f1adb97d52425472
+0	233	1791913596767084274	CMakeFiles/adbroot.dir/adbroot.cc.o	95c5a66c457a9d30
+233	288	1791913596822600159	/Users/7kimimasy/7kimisu/manager-next/app/build/intermediates/cxx/RelWithDebInfo/6u716453/obj/arm64-v8a/libadbroot.so	2307c5cff4b922a9

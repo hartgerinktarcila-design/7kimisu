@@ -70,6 +70,7 @@ android {
         buildConfig = true
         resValues = true
         compose = true
+        prefab = true
     }
 
     packaging {
@@ -79,14 +80,15 @@ android {
     }
 
     // 复用旧工程的 native 源码与 ksud 产物，不复制不改动
+    // （路径相对本模块目录 manager-next/app/，所以要上两级回到仓库根再进 manager/）
     externalNativeBuild {
         cmake {
-            path = file("../manager/app/src/main/cpp/CMakeLists.txt")
+            path = file("../../manager/app/src/main/cpp/CMakeLists.txt")
         }
     }
     sourceSets {
         getByName("main") {
-            jniLibs.srcDir("../manager/app/src/main/jniLibs")
+            jniLibs.srcDir("../../manager/app/src/main/jniLibs")
         }
     }
 
@@ -155,6 +157,8 @@ dependencies {
 
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.serialization.json)
+
+    implementation(libs.lsposed.cxx)
 
     implementation(libs.miuix.ui)
     implementation(libs.miuix.icons)

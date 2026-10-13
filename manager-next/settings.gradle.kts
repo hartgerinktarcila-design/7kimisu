@@ -18,5 +18,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "7kimisu-next"
+rootProject.name = "sevenk-next"
 include(":app")

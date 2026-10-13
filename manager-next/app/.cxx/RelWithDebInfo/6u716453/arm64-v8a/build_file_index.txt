@@ -1,0 +1,1 @@
+/Users/7kimimasy/7kimisu/manager/app/src/main/cpp/CMakeLists.txt

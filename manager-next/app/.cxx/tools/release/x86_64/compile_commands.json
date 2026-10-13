@@ -1,0 +1,17 @@
+[
+{
+  "directory": "/Users/7kimimasy/7kimisu/manager-next/app/.cxx/RelWithDebInfo/6u716453/x86_64",
+  "command": "/Users/7kimimasy/opt/android-sdk/ndk/29.0.14206865/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=x86_64-none-linux-android31 --sysroot=/Users/7kimimasy/opt/android-sdk/ndk/29.0.14206865/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Dsevenk_EXPORTS -I/Users/7kimimasy/7kimisu/manager/app/src/main/cpp/. -isystem /Users/7kimimasy/.gradle/caches/9.7.1/transforms/6d312d6cb720be371d61c4122877a161/transformed/libcxx-29.0.14206865/prefab/modules/cxx/include -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security -nostdinc++ -Wall -Qunused-arguments -fvisibility=hidden -fvisibility-inlines-hidden -fno-exceptions -fno-stack-protector -fomit-frame-pointer -Wno-builtin-macro-redefined -Wno-unused-value -D__FILE__=__FILE_NAME__ -fno-rtti -std=c++2b -O2 -g -DNDEBUG -fPIC -o CMakeFiles/sevenk.dir/jni.cc.o -c /Users/7kimimasy/7kimisu/manager/app/src/main/cpp/jni.cc",
+  "file": "/Users/7kimimasy/7kimisu/manager/app/src/main/cpp/jni.cc"
+},
+{
+  "directory": "/Users/7kimimasy/7kimisu/manager-next/app/.cxx/RelWithDebInfo/6u716453/x86_64",
+  "command": "/Users/7kimimasy/opt/android-sdk/ndk/29.0.14206865/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=x86_64-none-linux-android31 --sysroot=/Users/7kimimasy/opt/android-sdk/ndk/29.0.14206865/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Dsevenk_EXPORTS -I/Users/7kimimasy/7kimisu/manager/app/src/main/cpp/. -isystem /Users/7kimimasy/.gradle/caches/9.7.1/transforms/6d312d6cb720be371d61c4122877a161/transformed/libcxx-29.0.14206865/prefab/modules/cxx/include -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security -nostdinc++ -Wall -Qunused-arguments -fvisibility=hidden -fvisibility-inlines-hidden -fno-exceptions -fno-stack-protector -fomit-frame-pointer -Wno-builtin-macro-redefined -Wno-unused-value -D__FILE__=__FILE_NAME__ -fno-rtti -std=c++2b -O2 -g -DNDEBUG -fPIC -o CMakeFiles/sevenk.dir/ksu.cc.o -c /Users/7kimimasy/7kimisu/manager/app/src/main/cpp/ksu.cc",
+  "file": "/Users/7kimimasy/7kimisu/manager/app/src/main/cpp/ksu.cc"
+},
+{
+  "directory": "/Users/7kimimasy/7kimisu/manager-next/app/.cxx/RelWithDebInfo/6u716453/x86_64",
+  "command": "/Users/7kimimasy/opt/android-sdk/ndk/29.0.14206865/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=x86_64-none-linux-android31 --sysroot=/Users/7kimimasy/opt/android-sdk/ndk/29.0.14206865/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Dadbroot_EXPORTS -isystem /Users/7kimimasy/.gradle/caches/9.7.1/transforms/6d312d6cb720be371d61c4122877a161/transformed/libcxx-29.0.14206865/prefab/modules/cxx/include -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security -nostdinc++ -Wall -Qunused-arguments -fvisibility=hidden -fvisibility-inlines-hidden -fno-exceptions -fno-stack-protector -fomit-frame-pointer -Wno-builtin-macro-redefined -Wno-unused-value -D__FILE__=__FILE_NAME__ -fno-rtti -std=c++2b -O2 -g -DNDEBUG -fPIC -o CMakeFiles/adbroot.dir/adbroot.cc.o -c /Users/7kimimasy/7kimisu/manager/app/src/main/cpp/adbroot.cc",
+  "file": "/Users/7kimimasy/7kimisu/manager/app/src/main/cpp/adbroot.cc"
+}
+]

@@ -1,0 +1,1427 @@
+{
+    "$schema" : "https://docs.oasis-open.org/sarif/sarif/v2.1.0/errata01/os/schemas/sarif-schema-2.1.0.json",
+    "version" : "2.1.0",
+    "runs" : [
+        {
+            "tool": {
+                "driver": {
+                    "name": "Android Lint",
+                    "fullName": "Android Lint (in gradle)",
+                    "version": "9.4.1",
+                    "semanticVersion": "9.4.1",
+                    "organization": "Google",
+                    "informationUri": "https://developer.android.com/studio/write/lint",
+                    "fullDescription": {
+                        "text": "Static analysis originally for Android source code but now performing general analysis"
+                    },
+                    "language": "en-US",
+                    "rules": [
+                        {
+                            "id": "GradleDependency",
+                            "shortDescription": {
+                                "text": "Obsolete Gradle Dependency"
+                            },
+                            "fullDescription": {
+                                "text": "This detector looks for usages of libraries where the version you are using is not the current stable release. Using older versions is fine, and there are cases where you deliberately want to stick with an older version. However, you may simply not be aware that a more recent version is available, and that is what this lint check helps find."
+                            },
+                            "defaultConfiguration": {
+                                "level": "warning",
+                                "rank": 70
+                            },
+                            "properties": {
+                                "tags": [
+                                    "Correctness"
+                                ]
+                            }
+                        },
+                        {
+                            "id": "IconXmlAndPng",
+                            "shortDescription": {
+                                "text": "Icon is specified both as .xml file and as a bitmap",
+                                "markdown": "Icon is specified both as `.xml` file and as a bitmap"
+                            },
+                            "fullDescription": {
+                                "text": "If a drawable resource appears as an .xml file in the drawable/ folder, it's usually not intentional for it to also appear as a bitmap using the same name; generally you expect the drawable XML file to define states and each state has a corresponding drawable bitmap.",
+                                "markdown": "If a drawable resource appears as an `.xml` file in the `drawable/` folder, it's usually not intentional for it to also appear as a bitmap using the same name; generally you expect the drawable XML file to define states and each state has a corresponding drawable bitmap."
+                            },
+                            "defaultConfiguration": {
+                                "level": "warning",
+                                "rank": 40
+                            },
+                            "properties": {
+                                "tags": [
+                                    "Icons",
+                                    "Usability"
+                                ]
+                            }
+                        },
+                        {
+                            "id": "MonochromeLauncherIcon",
+                            "shortDescription": {
+                                "text": "Monochrome icon is not defined"
+                            },
+                            "fullDescription": {
+                                "text": "The system may use the coloring of the user's chosen wallpaper and theme to tint app icons. Providing a <monochrome> layer (which will be used for tinting) for every adaptive icon is strongly recommended, otherwise Android 16 QPR 2 and above will simply tint the color version of the icon, which may look unusual. Devices running earlier Android versions will (with no monochrome layer) show the untinted color icon for your app, which will look inconsistent.",
+                                "markdown": "The system may use the coloring of the user's chosen wallpaper and theme to tint app icons. Providing a `<monochrome>` layer (which will be used for tinting) for every adaptive icon is strongly recommended, otherwise Android 16 QPR 2 and above will simply tint the color version of the icon, which may look unusual. Devices running earlier Android versions will (with no monochrome layer) show the untinted color icon for your app, which will look inconsistent."
+                            },
+                            "defaultConfiguration": {
+                                "level": "warning",
+                                "rank": 50
+                            },
+                            "properties": {
+                                "tags": [
+                                    "Icons",
+                                    "Usability"
+                                ]
+                            }
+                        },
+                        {
+                            "id": "NewerVersionAvailable",
+                            "shortDescription": {
+                                "text": "Newer Library Versions Available"
+                            },
+                            "fullDescription": {
+                                "text": "This detector checks with a central repository to see if there are newer versions available for the dependencies used by this project. This is similar to the GradleDependency check, which checks for newer versions available in the Android SDK tools and libraries, but this works with any MavenCentral dependency, and connects to the library every time, which makes it more flexible but also much slower.",
+                                "markdown": "This detector checks with a central repository to see if there are newer versions available for the dependencies used by this project. This is similar to the `GradleDependency` check, which checks for newer versions available in the Android SDK tools and libraries, but this works with any MavenCentral dependency, and connects to the library every time, which makes it more flexible but also **much** slower."
+                            },
+                            "defaultConfiguration": {
+                                "level": "warning",
+                                "rank": 70
+                            },
+                            "properties": {
+                                "tags": [
+                                    "Correctness"
+                                ]
+                            }
+                        },
+                        {
+                            "id": "QueryPermissionsNeeded",
+                            "shortDescription": {
+                                "text": "Using APIs affected by query permissions"
+                            },
+                            "fullDescription": {
+                                "text": "Apps that target Android 11 cannot query or interact with other installed apps by default. If you need to query or interact with other installed apps, you may need to add a <queries> declaration in your manifest.\n\nAs a corollary, the methods PackageManager#getInstalledPackages and PackageManager#getInstalledApplications will no longer return information about all installed apps. To query specific apps or types of apps, you can use methods like PackageManager#getPackageInfo or PackageManager#queryIntentActivities.",
+                                "markdown": "Apps that target Android 11 cannot query or interact with other installed apps by default. If you need to query or interact with other installed apps, you may need to add a `<queries>` declaration in your manifest.\n\nAs a corollary, the methods `PackageManager#getInstalledPackages` and `PackageManager#getInstalledApplications` will no longer return information about all installed apps. To query specific apps or types of apps, you can use methods like `PackageManager#getPackageInfo` or `PackageManager#queryIntentActivities`."
+                            },
+                            "defaultConfiguration": {
+                                "level": "warning",
+                                "rank": 60
+                            },
+                            "properties": {
+                                "tags": [
+                                    "Correctness"
+                                ]
+                            }
+                        },
+                        {
+                            "id": "UnusedResources",
+                            "shortDescription": {
+                                "text": "Unused resources"
+                            },
+                            "fullDescription": {
+                                "text": "Unused resources make applications larger and slow down builds.\n\n\nThe unused resource check can ignore tests. If you want to include resources that are only referenced from tests, consider packaging them in a test source set instead.\n\nYou can include test sources in the unused resource check by setting the system property lint.unused-resources.include-tests=true, and to exclude them (usually for performance reasons), use lint.unused-resources.exclude-tests=true.\n",
+                                "markdown": "Unused resources make applications larger and slow down builds.\n\n\nThe unused resource check can ignore tests. If you want to include resources that are only referenced from tests, consider packaging them in a test source set instead.\n\nYou can include test sources in the unused resource check by setting the system property `lint.unused-resources.include-tests=true`, and to exclude them (usually for performance reasons), use `lint.unused-resources.exclude-tests=true`.\n"
+                            },
+                            "defaultConfiguration": {
+                                "level": "warning",
+                                "rank": 80
+                            },
+                            "properties": {
+                                "tags": [
+                                    "Performance"
+                                ]
+                            }
+                        },
+                        {
+                            "id": "UseKtx",
+                            "shortDescription": {
+                                "text": "Use KTX extension function"
+                            },
+                            "fullDescription": {
+                                "text": "The Android KTX libraries decorates the Android platform SDK as well as various libraries with more convenient extension functions available from Kotlin, allowing you to use default parameters, named parameters, and more."
+                            },
+                            "defaultConfiguration": {
+                                "level": "warning",
+                                "rank": 50
+                            },
+                            "properties": {
+                                "tags": [
+                                    "Productivity"
+                                ]
+                            }
+                        }
+                    ]
+                }
+            },
+            "originalUriBaseIds": {
+                "%SRCROOT%": {
+                    "uri": "file:///Users/7kimimasy/7kimisu/manager-next/"
+                }
+            },
+            "results": [
+                {
+                    "ruleId": "QueryPermissionsNeeded",
+                    "ruleIndex": 4,
+                    "message": {
+                        "text": "As of Android 11, this method no longer returns information about all apps; see https://g.co/dev/packagevisibility for details"
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "app/src/main/java/com/sevenk/core/ui/screen/superuser/SuperUserViewModel.kt"
+                                },
+                                "region": {
+                                    "startLine": 77,
+                                    "startColumn": 27,
+                                    "endLine": 77,
+                                    "endColumn": 47,
+                                    "charOffset": 2825,
+                                    "charLength": 20,
+                                    "snippet": {
+                                        "text": "getInstalledPackages"
+                                    }
+                                },
+                                "contextRegion": {
+                                    "startLine": 75,
+                                    "endLine": 80,
+                                    "snippet": {
+                                        "text": "    private fun fetchApps(): List<AppInfo> {\n        val pm = ksuApp.packageManager\n        val packages = pm.getInstalledPackages(PackageManager.GET_META_DATA)\n\n        return packages.asSequence()\n"
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "partialFingerprints": {
+                        "sourceContext/v1": "5465b066d6f65fb7"
+                    }
+                },
+                {
+                    "ruleId": "GradleDependency",
+                    "ruleIndex": 0,
+                    "message": {
+                        "text": "A newer version of androidx.navigationevent:navigationevent-compose than 1.1.2 is available: 1.2.0"
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "gradle/libs.versions.toml"
+                                },
+                                "region": {
+                                    "startLine": 11,
+                                    "startColumn": 19,
+                                    "endLine": 11,
+                                    "endColumn": 26,
+                                    "charOffset": 245,
+                                    "charLength": 7,
+                                    "snippet": {
+                                        "text": "\"1.1.2\""
+                                    }
+                                },
+                                "contextRegion": {
+                                    "startLine": 9,
+                                    "endLine": 14,
+                                    "snippet": {
+                                        "text": "kotlinx-serialization = \"1.11.0\"\njunit = \"4.13.2\"\nnavigationevent = \"1.1.2\"\ncommonmark = \"0.30.0\"\nwebkit = \"1.17.0\"\n"
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "fixes": [
+                        {
+                            "description": {
+                                "text": "Change to 1.2.0"
+                            },
+                            "artifactChanges": [
+                                {
+                                    "artifactLocation": {
+                                        "uriBaseId": "%SRCROOT%",
+                                        "uri": "gradle/libs.versions.toml"
+                                    },
+                                    "replacements": [
+                                        {
+                                            "deletedRegion": {
+                                                "startLine": 11,
+                                                "startColumn": 20,
+                                                "charOffset": 246,
+                                                "endLine": 11,
+                                                "endColumn": 25,
+                                                "charLength": 5
+                                            },
+                                            "insertedContent": {
+                                                "text": "1.2.0\n"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "partialFingerprints": {
+                        "sourceContext/v1": "4a1384535ce67e0a"
+                    }
+                },
+                {
+                    "ruleId": "GradleDependency",
+                    "ruleIndex": 0,
+                    "message": {
+                        "text": "A newer version of androidx.webkit:webkit than 1.17.0 is available: 1.17.1"
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "gradle/libs.versions.toml"
+                                },
+                                "region": {
+                                    "startLine": 13,
+                                    "startColumn": 10,
+                                    "endLine": 13,
+                                    "endColumn": 18,
+                                    "charOffset": 284,
+                                    "charLength": 8,
+                                    "snippet": {
+                                        "text": "\"1.17.0\""
+                                    }
+                                },
+                                "contextRegion": {
+                                    "startLine": 11,
+                                    "endLine": 16,
+                                    "snippet": {
+                                        "text": "navigationevent = \"1.1.2\"\ncommonmark = \"0.30.0\"\nwebkit = \"1.17.0\"\nparcelablelist = \"2.0.1\"\nmaterial3 = \"1.5.0-alpha28\"\n"
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "fixes": [
+                        {
+                            "description": {
+                                "text": "Change to 1.17.1"
+                            },
+                            "artifactChanges": [
+                                {
+                                    "artifactLocation": {
+                                        "uriBaseId": "%SRCROOT%",
+                                        "uri": "gradle/libs.versions.toml"
+                                    },
+                                    "replacements": [
+                                        {
+                                            "deletedRegion": {
+                                                "startLine": 13,
+                                                "startColumn": 11,
+                                                "charOffset": 285,
+                                                "endLine": 13,
+                                                "endColumn": 17,
+                                                "charLength": 6
+                                            },
+                                            "insertedContent": {
+                                                "text": "1.17.1\n"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "partialFingerprints": {
+                        "sourceContext/v1": "cd78b873f1699427"
+                    }
+                },
+                {
+                    "ruleId": "GradleDependency",
+                    "ruleIndex": 0,
+                    "message": {
+                        "text": "A newer version of androidx.compose.material3:material3 than 1.5.0-alpha28 is available: 1.5.0-beta01"
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "gradle/libs.versions.toml"
+                                },
+                                "region": {
+                                    "startLine": 15,
+                                    "startColumn": 13,
+                                    "endLine": 15,
+                                    "endColumn": 28,
+                                    "charOffset": 330,
+                                    "charLength": 15,
+                                    "snippet": {
+                                        "text": "\"1.5.0-alpha28\""
+                                    }
+                                },
+                                "contextRegion": {
+                                    "startLine": 13,
+                                    "endLine": 18,
+                                    "snippet": {
+                                        "text": "webkit = \"1.17.0\"\nparcelablelist = \"2.0.1\"\nmaterial3 = \"1.5.0-alpha28\"\nmaterialKolor = \"5.0.1\"\nndk = \"29.0.14206865\"\n"
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "fixes": [
+                        {
+                            "description": {
+                                "text": "Change to 1.5.0-beta01"
+                            },
+                            "artifactChanges": [
+                                {
+                                    "artifactLocation": {
+                                        "uriBaseId": "%SRCROOT%",
+                                        "uri": "gradle/libs.versions.toml"
+                                    },
+                                    "replacements": [
+                                        {
+                                            "deletedRegion": {
+                                                "startLine": 15,
+                                                "startColumn": 14,
+                                                "charOffset": 331,
+                                                "endLine": 15,
+                                                "endColumn": 27,
+                                                "charLength": 13
+                                            },
+                                            "insertedContent": {
+                                                "text": "1.5.0-beta01\n"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "partialFingerprints": {
+                        "sourceContext/v1": "405e388751a1a9a0"
+                    }
+                },
+                {
+                    "ruleId": "NewerVersionAvailable",
+                    "ruleIndex": 3,
+                    "message": {
+                        "text": "A newer version of org.jetbrains.kotlin.plugin.compose than 2.4.20 is available: 2.4.21"
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "gradle/libs.versions.toml"
+                                },
+                                "region": {
+                                    "startLine": 3,
+                                    "startColumn": 10,
+                                    "endLine": 3,
+                                    "endColumn": 18,
+                                    "charOffset": 34,
+                                    "charLength": 8,
+                                    "snippet": {
+                                        "text": "\"2.4.20\""
+                                    }
+                                },
+                                "contextRegion": {
+                                    "startLine": 1,
+                                    "endLine": 6,
+                                    "snippet": {
+                                        "text": "[versions]\nagp = \"9.4.1\"\nkotlin = \"2.4.20\"\ncompose-bom = \"2026.09.00\"\nlifecycle = \"2.11.0\"\n"
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "fixes": [
+                        {
+                            "description": {
+                                "text": "Change to 2.4.21"
+                            },
+                            "artifactChanges": [
+                                {
+                                    "artifactLocation": {
+                                        "uriBaseId": "%SRCROOT%",
+                                        "uri": "gradle/libs.versions.toml"
+                                    },
+                                    "replacements": [
+                                        {
+                                            "deletedRegion": {
+                                                "startLine": 3,
+                                                "startColumn": 11,
+                                                "charOffset": 35,
+                                                "endLine": 3,
+                                                "endColumn": 17,
+                                                "charLength": 6
+                                            },
+                                            "insertedContent": {
+                                                "text": "2.4.21\n"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "partialFingerprints": {
+                        "sourceContext/v1": "98a95644439f192f"
+                    }
+                },
+                {
+                    "ruleId": "NewerVersionAvailable",
+                    "ruleIndex": 3,
+                    "message": {
+                        "text": "A newer version of org.commonmark:commonmark-ext-autolink than 0.30.0 is available: 0.30.1"
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "gradle/libs.versions.toml"
+                                },
+                                "region": {
+                                    "startLine": 12,
+                                    "startColumn": 14,
+                                    "endLine": 12,
+                                    "endColumn": 22,
+                                    "charOffset": 266,
+                                    "charLength": 8,
+                                    "snippet": {
+                                        "text": "\"0.30.0\""
+                                    }
+                                },
+                                "contextRegion": {
+                                    "startLine": 10,
+                                    "endLine": 15,
+                                    "snippet": {
+                                        "text": "junit = \"4.13.2\"\nnavigationevent = \"1.1.2\"\ncommonmark = \"0.30.0\"\nwebkit = \"1.17.0\"\nparcelablelist = \"2.0.1\"\n"
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "fixes": [
+                        {
+                            "description": {
+                                "text": "Change to 0.30.1"
+                            },
+                            "artifactChanges": [
+                                {
+                                    "artifactLocation": {
+                                        "uriBaseId": "%SRCROOT%",
+                                        "uri": "gradle/libs.versions.toml"
+                                    },
+                                    "replacements": [
+                                        {
+                                            "deletedRegion": {
+                                                "startLine": 12,
+                                                "startColumn": 15,
+                                                "charOffset": 267,
+                                                "endLine": 12,
+                                                "endColumn": 21,
+                                                "charLength": 6
+                                            },
+                                            "insertedContent": {
+                                                "text": "0.30.1\n"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "partialFingerprints": {
+                        "sourceContext/v1": "400753884bcb8a8b"
+                    }
+                },
+                {
+                    "ruleId": "NewerVersionAvailable",
+                    "ruleIndex": 3,
+                    "message": {
+                        "text": "A newer version of org.commonmark:commonmark-ext-gfm-tables than 0.30.0 is available: 0.30.1"
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "gradle/libs.versions.toml"
+                                },
+                                "region": {
+                                    "startLine": 12,
+                                    "startColumn": 14,
+                                    "endLine": 12,
+                                    "endColumn": 22,
+                                    "charOffset": 266,
+                                    "charLength": 8,
+                                    "snippet": {
+                                        "text": "\"0.30.0\""
+                                    }
+                                },
+                                "contextRegion": {
+                                    "startLine": 10,
+                                    "endLine": 15,
+                                    "snippet": {
+                                        "text": "junit = \"4.13.2\"\nnavigationevent = \"1.1.2\"\ncommonmark = \"0.30.0\"\nwebkit = \"1.17.0\"\nparcelablelist = \"2.0.1\"\n"
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "fixes": [
+                        {
+                            "description": {
+                                "text": "Change to 0.30.1"
+                            },
+                            "artifactChanges": [
+                                {
+                                    "artifactLocation": {
+                                        "uriBaseId": "%SRCROOT%",
+                                        "uri": "gradle/libs.versions.toml"
+                                    },
+                                    "replacements": [
+                                        {
+                                            "deletedRegion": {
+                                                "startLine": 12,
+                                                "startColumn": 15,
+                                                "charOffset": 267,
+                                                "endLine": 12,
+                                                "endColumn": 21,
+                                                "charLength": 6
+                                            },
+                                            "insertedContent": {
+                                                "text": "0.30.1\n"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "partialFingerprints": {
+                        "sourceContext/v1": "400753884bcb8a8b"
+                    }
+                },
+                {
+                    "ruleId": "NewerVersionAvailable",
+                    "ruleIndex": 3,
+                    "message": {
+                        "text": "A newer version of org.lsposed.libcxx:libcxx than 29.0.14206865 is available: 30.0.16248370"
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "gradle/libs.versions.toml"
+                                },
+                                "region": {
+                                    "startLine": 17,
+                                    "startColumn": 7,
+                                    "endLine": 17,
+                                    "endColumn": 22,
+                                    "charOffset": 376,
+                                    "charLength": 15,
+                                    "snippet": {
+                                        "text": "\"29.0.14206865\""
+                                    }
+                                },
+                                "contextRegion": {
+                                    "startLine": 15,
+                                    "endLine": 20,
+                                    "snippet": {
+                                        "text": "material3 = \"1.5.0-alpha28\"\nmaterialKolor = \"5.0.1\"\nndk = \"29.0.14206865\"\nlibsu = \"6.0.0\"\napksign = \"1.4\"\n"
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "fixes": [
+                        {
+                            "description": {
+                                "text": "Change to 30.0.16248370"
+                            },
+                            "artifactChanges": [
+                                {
+                                    "artifactLocation": {
+                                        "uriBaseId": "%SRCROOT%",
+                                        "uri": "gradle/libs.versions.toml"
+                                    },
+                                    "replacements": [
+                                        {
+                                            "deletedRegion": {
+                                                "startLine": 17,
+                                                "startColumn": 8,
+                                                "charOffset": 377,
+                                                "endLine": 17,
+                                                "endColumn": 21,
+                                                "charLength": 13
+                                            },
+                                            "insertedContent": {
+                                                "text": "30.0.16248370\n"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "partialFingerprints": {
+                        "sourceContext/v1": "709b9d79750a2b66"
+                    }
+                },
+                {
+                    "ruleId": "NewerVersionAvailable",
+                    "ruleIndex": 3,
+                    "message": {
+                        "text": "A newer version of org.lsposed.hiddenapibypass:hiddenapibypass than 6.1 is available: 6.2"
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "gradle/libs.versions.toml"
+                                },
+                                "region": {
+                                    "startLine": 22,
+                                    "startColumn": 19,
+                                    "endLine": 22,
+                                    "endColumn": 24,
+                                    "charOffset": 475,
+                                    "charLength": 5,
+                                    "snippet": {
+                                        "text": "\"6.1\""
+                                    }
+                                },
+                                "contextRegion": {
+                                    "startLine": 20,
+                                    "endLine": 25,
+                                    "snippet": {
+                                        "text": "miuix = \"0.9.4\"\nokhttp = \"5.5.0\"\nhiddenapibypass = \"6.1\"\nappiconloader = \"1.5.0\"\nprotobuf = \"4.36.1\"\n"
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "fixes": [
+                        {
+                            "description": {
+                                "text": "Change to 6.2"
+                            },
+                            "artifactChanges": [
+                                {
+                                    "artifactLocation": {
+                                        "uriBaseId": "%SRCROOT%",
+                                        "uri": "gradle/libs.versions.toml"
+                                    },
+                                    "replacements": [
+                                        {
+                                            "deletedRegion": {
+                                                "startLine": 22,
+                                                "startColumn": 20,
+                                                "charOffset": 476,
+                                                "endLine": 22,
+                                                "endColumn": 23,
+                                                "charLength": 3
+                                            },
+                                            "insertedContent": {
+                                                "text": "6.2\n"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "partialFingerprints": {
+                        "sourceContext/v1": "d624adc418d733dd"
+                    }
+                },
+                {
+                    "ruleId": "NewerVersionAvailable",
+                    "ruleIndex": 3,
+                    "message": {
+                        "text": "A newer version of com.google.protobuf:protoc than 4.36.1 is available: 4.36.2"
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "gradle/libs.versions.toml"
+                                },
+                                "region": {
+                                    "startLine": 24,
+                                    "startColumn": 12,
+                                    "endLine": 24,
+                                    "endColumn": 20,
+                                    "charOffset": 516,
+                                    "charLength": 8,
+                                    "snippet": {
+                                        "text": "\"4.36.1\""
+                                    }
+                                },
+                                "contextRegion": {
+                                    "startLine": 22,
+                                    "endLine": 27,
+                                    "snippet": {
+                                        "text": "hiddenapibypass = \"6.1\"\nappiconloader = \"1.5.0\"\nprotobuf = \"4.36.1\"\ncommons-compress = \"1.28.0\"\nxz = \"1.12\"\n"
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "fixes": [
+                        {
+                            "description": {
+                                "text": "Change to 4.36.2"
+                            },
+                            "artifactChanges": [
+                                {
+                                    "artifactLocation": {
+                                        "uriBaseId": "%SRCROOT%",
+                                        "uri": "gradle/libs.versions.toml"
+                                    },
+                                    "replacements": [
+                                        {
+                                            "deletedRegion": {
+                                                "startLine": 24,
+                                                "startColumn": 13,
+                                                "charOffset": 517,
+                                                "endLine": 24,
+                                                "endColumn": 19,
+                                                "charLength": 6
+                                            },
+                                            "insertedContent": {
+                                                "text": "4.36.2\n"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "partialFingerprints": {
+                        "sourceContext/v1": "13598764f30a8fc5"
+                    }
+                },
+                {
+                    "ruleId": "UnusedResources",
+                    "ruleIndex": 5,
+                    "message": {
+                        "text": "The resource R.drawable.art_default appears to be unused",
+                        "markdown": "The resource `R.drawable.art_default` appears to be unused"
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "app/src/main/res/drawable-nodpi/art_default.jpg"
+                                },
+                                "region": {
+                                    "byteOffset": 0
+                                }                            }
+                        }
+                    ],
+                    "fixes": [
+                    ],
+                    "partialFingerprints": {
+                    }
+                },
+                {
+                    "ruleId": "UnusedResources",
+                    "ruleIndex": 5,
+                    "message": {
+                        "text": "The resource R.xml.filepaths appears to be unused",
+                        "markdown": "The resource `R.xml.filepaths` appears to be unused"
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "app/src/main/res/xml/filepaths.xml"
+                                },
+                                "region": {
+                                    "startLine": 3,
+                                    "startColumn": 1,
+                                    "endLine": 5,
+                                    "endColumn": 9,
+                                    "charOffset": 40,
+                                    "charLength": 56,
+                                    "snippet": {
+                                        "text": "<paths>\n    <cache-path name=\"cache\" path=\".\"/>\n</paths>"
+                                    }
+                                },
+                                "contextRegion": {
+                                    "startLine": 1,
+                                    "endLine": 6,
+                                    "snippet": {
+                                        "text": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n\n<paths>\n    <cache-path name=\"cache\" path=\".\"/>\n</paths>\n"
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "fixes": [
+                    ],
+                    "partialFingerprints": {
+                        "sourceContext/v1": "1a2030df847cd3d0"
+                    }
+                },
+                {
+                    "ruleId": "UnusedResources",
+                    "ruleIndex": 5,
+                    "message": {
+                        "text": "The resource R.drawable.ic_launcher_monochrome appears to be unused",
+                        "markdown": "The resource `R.drawable.ic_launcher_monochrome` appears to be unused"
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "app/src/main/res/drawable/ic_launcher_monochrome.xml"
+                                },
+                                "region": {
+                                    "startLine": 2,
+                                    "startColumn": 1,
+                                    "endLine": 22,
+                                    "endColumn": 10,
+                                    "charOffset": 39,
+                                    "charLength": 694,
+                                    "snippet": {
+                                        "text": "<vector xmlns:android=\"http://schemas.android.com/apk/res/android\"\n    android:width=\"108dp\"\n    android:height=\"108dp\"\n    android:viewportWidth=\"108\"\n    android:viewportHeight=\"108\">\n\n    <group\n        android:scaleX=\"0.135\"\n        android:scaleY=\"0.135\">\n        <path\n            android:pathData=\"M 259 259 H 541 V 541 H 259 V 259 Z\"\n            android:strokeWidth=\"18\"\n            android:strokeColor=\"#000000\" />\n        <path\n            android:fillColor=\"#000000\"\n            android:pathData=\"M 257 257 H 407 V 407 H 257 V 257 Z\" />\n        <path\n            android:fillColor=\"#000000\"\n            android:pathData=\"M 393 393 H 543 V 543 H 393 V 393 Z\" />\n    </group>\n</vector>"
+                                    }
+                                },
+                                "contextRegion": {
+                                    "startLine": 1,
+                                    "endLine": 22,
+                                    "snippet": {
+                                        "text": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<vector xmlns:android=\"http://schemas.android.com/apk/res/android\"\n    android:width=\"108dp\"\n    android:height=\"108dp\"\n    android:viewportWidth=\"108\"\n    android:viewportHeight=\"108\">\n\n    <group\n        android:scaleX=\"0.135\"\n        android:scaleY=\"0.135\">\n        <path\n            android:pathData=\"M 259 259 H 541 V 541 H 259 V 259 Z\"\n            android:strokeWidth=\"18\"\n            android:strokeColor=\"#000000\" />\n        <path\n            android:fillColor=\"#000000\"\n            android:pathData=\"M 257 257 H 407 V 407 H 257 V 257 Z\" />\n        <path\n            android:fillColor=\"#000000\"\n            android:pathData=\"M 393 393 H 543 V 543 H 393 V 393 Z\" />\n    </group>\n</vector>"
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "fixes": [
+                    ],
+                    "partialFingerprints": {
+                        "sourceContext/v1": "2e865c75e45460b4"
+                    }
+                },
+                {
+                    "ruleId": "UnusedResources",
+                    "ruleIndex": 5,
+                    "message": {
+                        "text": "The resource R.style.Theme_KernelSU_WebUI appears to be unused",
+                        "markdown": "The resource `R.style.Theme_KernelSU_WebUI` appears to be unused"
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "app/src/main/res/values/themes.xml"
+                                },
+                                "region": {
+                                    "startLine": 16,
+                                    "startColumn": 12,
+                                    "endLine": 16,
+                                    "endColumn": 39,
+                                    "charOffset": 736,
+                                    "charLength": 27,
+                                    "snippet": {
+                                        "text": "name=\"Theme.KernelSU.WebUI\""
+                                    }
+                                },
+                                "contextRegion": {
+                                    "startLine": 14,
+                                    "endLine": 19,
+                                    "snippet": {
+                                        "text": "    </style>\n\n    <style name=\"Theme.KernelSU.WebUI\" parent=\"Theme.KernelSU\">\n        <item name=\"android:windowLightStatusBar\">true</item>\n        <item name=\"android:windowLightNavigationBar\">true</item>\n"
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "fixes": [
+                    ],
+                    "partialFingerprints": {
+                        "sourceContext/v1": "75f0f1a460b86b6c"
+                    }
+                },
+                {
+                    "ruleId": "UnusedResources",
+                    "ruleIndex": 5,
+                    "message": {
+                        "text": "The resource R.drawable.troll_face appears to be unused",
+                        "markdown": "The resource `R.drawable.troll_face` appears to be unused"
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "app/src/main/res/drawable-nodpi/troll_face.png"
+                                },
+                                "region": {
+                                    "byteOffset": 0
+                                }                            }
+                        }
+                    ],
+                    "fixes": [
+                    ],
+                    "partialFingerprints": {
+                    }
+                },
+                {
+                    "ruleId": "UnusedResources",
+                    "ruleIndex": 5,
+                    "message": {
+                        "text": "The resource R.drawable.wallpaper_default_landscape appears to be unused",
+                        "markdown": "The resource `R.drawable.wallpaper_default_landscape` appears to be unused"
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "app/src/main/res/drawable-nodpi/wallpaper_default_landscape.jpg"
+                                },
+                                "region": {
+                                    "byteOffset": 0
+                                }                            }
+                        }
+                    ],
+                    "fixes": [
+                    ],
+                    "partialFingerprints": {
+                    }
+                },
+                {
+                    "ruleId": "UnusedResources",
+                    "ruleIndex": 5,
+                    "message": {
+                        "text": "The resource R.drawable.wallpaper_default_portrait appears to be unused",
+                        "markdown": "The resource `R.drawable.wallpaper_default_portrait` appears to be unused"
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "app/src/main/res/drawable-nodpi/wallpaper_default_portrait.jpg"
+                                },
+                                "region": {
+                                    "byteOffset": 0
+                                }                            }
+                        }
+                    ],
+                    "fixes": [
+                    ],
+                    "partialFingerprints": {
+                    }
+                },
+                {
+                    "ruleId": "IconXmlAndPng",
+                    "ruleIndex": 1,
+                    "message": {
+                        "text": "The following images appear both as density independent .xml files and as bitmap files: src/main/res/drawable-hdpi/ic_launcher_splash.png, src/main/res/drawable/ic_launcher_splash.xml",
+                        "markdown": "The following images appear both as density independent `.xml` files and as bitmap files: src/main/res/drawable-hdpi/ic_launcher_splash.png, src/main/res/drawable/ic_launcher_splash.xml"
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "app/src/main/res/drawable/ic_launcher_splash.xml"
+                                },
+                                "region": {
+                                    "startLine": 1
+                                }                            }
+                        }
+                    ],
+                    "relatedLocations": [
+                        {
+                            "id": 1,
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "app/src/main/res/drawable-xxxhdpi/ic_launcher_splash.png"
+                                },
+                                "region": {
+                                    "byteOffset": 0
+                                }                            }
+                        },
+                        {
+                            "id": 2,
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "app/src/main/res/drawable-xxhdpi/ic_launcher_splash.png"
+                                },
+                                "region": {
+                                    "byteOffset": 0
+                                }                            }
+                        },
+                        {
+                            "id": 3,
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "app/src/main/res/drawable-xhdpi/ic_launcher_splash.png"
+                                },
+                                "region": {
+                                    "byteOffset": 0
+                                }                            }
+                        },
+                        {
+                            "id": 4,
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "app/src/main/res/drawable-mdpi/ic_launcher_splash.png"
+                                },
+                                "region": {
+                                    "byteOffset": 0
+                                }                            }
+                        },
+                        {
+                            "id": 5,
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "app/src/main/res/drawable-hdpi/ic_launcher_splash.png"
+                                },
+                                "region": {
+                                    "byteOffset": 0
+                                }                            }
+                        }
+                    ],
+                    "partialFingerprints": {
+                    }
+                },
+                {
+                    "ruleId": "MonochromeLauncherIcon",
+                    "ruleIndex": 2,
+                    "message": {
+                        "text": "The application adaptive icon is missing a monochrome tag"
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "app/src/main/res/mipmap-anydpi/ic_launcher.xml"
+                                },
+                                "region": {
+                                    "startLine": 2,
+                                    "startColumn": 1,
+                                    "endLine": 5,
+                                    "endColumn": 17,
+                                    "charOffset": 39,
+                                    "charLength": 230,
+                                    "snippet": {
+                                        "text": "<adaptive-icon xmlns:android=\"http://schemas.android.com/apk/res/android\">\n    <background android:drawable=\"@color/ic_launcher_background\" />\n    <foreground android:drawable=\"@drawable/ic_launcher_foreground\" />\n</adaptive-icon>"
+                                    }
+                                },
+                                "contextRegion": {
+                                    "startLine": 1,
+                                    "endLine": 6,
+                                    "snippet": {
+                                        "text": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<adaptive-icon xmlns:android=\"http://schemas.android.com/apk/res/android\">\n    <background android:drawable=\"@color/ic_launcher_background\" />\n    <foreground android:drawable=\"@drawable/ic_launcher_foreground\" />\n</adaptive-icon>\n"
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "partialFingerprints": {
+                        "sourceContext/v1": "ab147b2c15ec97b8"
+                    }
+                },
+                {
+                    "ruleId": "UseKtx",
+                    "ruleIndex": 6,
+                    "message": {
+                        "text": "Use the KTX function createBitmap instead?",
+                        "markdown": "Use the KTX function `createBitmap` instead?"
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "app/src/main/java/com/sevenk/core/ui/component/AppIconImage.kt"
+                                },
+                                "region": {
+                                    "startLine": 41,
+                                    "startColumn": 18,
+                                    "endLine": 41,
+                                    "endColumn": 77,
+                                    "charOffset": 1582,
+                                    "charLength": 59,
+                                    "snippet": {
+                                        "text": "Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)"
+                                    }
+                                },
+                                "contextRegion": {
+                                    "startLine": 39,
+                                    "endLine": 44,
+                                    "snippet": {
+                                        "text": "    val width = drawable.intrinsicWidth.coerceAtLeast(1)\n    val height = drawable.intrinsicHeight.coerceAtLeast(1)\n    val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)\n    val canvas = Canvas(bitmap)\n    drawable.setBounds(0, 0, canvas.width, canvas.height)\n"
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "fixes": [
+                        {
+                            "description": {
+                                "text": "Replace with the createBitmap function"
+                            },
+                            "artifactChanges": [
+                                {
+                                    "artifactLocation": {
+                                        "uriBaseId": "%SRCROOT%",
+                                        "uri": "app/src/main/java/com/sevenk/core/ui/component/AppIconImage.kt"
+                                    },
+                                    "replacements": [
+                                        {
+                                            "deletedRegion": {
+                                                "startLine": 41,
+                                                "startColumn": 18,
+                                                "charOffset": 1582,
+                                                "endLine": 41,
+                                                "endColumn": 77,
+                                                "charLength": 59
+                                            },
+                                            "insertedContent": {
+                                                "text": "createBitmap(width, height)\n"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "partialFingerprints": {
+                        "sourceContext/v1": "4a263fa25fde23e1"
+                    }
+                },
+                {
+                    "ruleId": "UseKtx",
+                    "ruleIndex": 6,
+                    "message": {
+                        "text": "Use the KTX extension function String.toUri instead?",
+                        "markdown": "Use the KTX extension function `String.toUri` instead?"
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "app/src/main/java/com/sevenk/core/ui/screen/flash/FlashScreen.kt"
+                                },
+                                "region": {
+                                    "startLine": 144,
+                                    "startColumn": 52,
+                                    "endLine": 144,
+                                    "endColumn": 65,
+                                    "charOffset": 6178,
+                                    "charLength": 13,
+                                    "snippet": {
+                                        "text": "Uri.parse(it)"
+                                    }
+                                },
+                                "contextRegion": {
+                                    "startLine": 142,
+                                    "endLine": 147,
+                                    "snippet": {
+                                        "text": "                runCatching {\n                    installBoot(\n                        bootUri = targetUri?.let { Uri.parse(it) },\n                        ota = targetOta,\n                        partition = null,\n"
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "fixes": [
+                        {
+                            "description": {
+                                "text": "Replace with the toUri extension function"
+                            },
+                            "artifactChanges": [
+                                {
+                                    "artifactLocation": {
+                                        "uriBaseId": "%SRCROOT%",
+                                        "uri": "app/src/main/java/com/sevenk/core/ui/screen/flash/FlashScreen.kt"
+                                    },
+                                    "replacements": [
+                                        {
+                                            "deletedRegion": {
+                                                "startLine": 144,
+                                                "startColumn": 52,
+                                                "charOffset": 6178,
+                                                "endLine": 144,
+                                                "endColumn": 65,
+                                                "charLength": 13
+                                            },
+                                            "insertedContent": {
+                                                "text": "it.toUri()\n"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "partialFingerprints": {
+                        "sourceContext/v1": "6ee588d5acca4c09"
+                    }
+                },
+                {
+                    "ruleId": "UseKtx",
+                    "ruleIndex": 6,
+                    "message": {
+                        "text": "Use the KTX extension function String.toUri instead?",
+                        "markdown": "Use the KTX extension function `String.toUri` instead?"
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "app/src/main/java/com/sevenk/core/ui/screen/flash/FlashScreen.kt"
+                                },
+                                "region": {
+                                    "startLine": 188,
+                                    "startColumn": 46,
+                                    "endLine": 188,
+                                    "endColumn": 59,
+                                    "charOffset": 7906,
+                                    "charLength": 13,
+                                    "snippet": {
+                                        "text": "Uri.parse(it)"
+                                    }
+                                },
+                                "contextRegion": {
+                                    "startLine": 186,
+                                    "endLine": 191,
+                                    "snippet": {
+                                        "text": "                BasicComponent(\n                    title = stringResource(R.string.flash_select_file),\n                    summary = bootUri?.let { Uri.parse(it).getFileName(context) }\n                        ?: stringResource(R.string.flash_select_file_summary),\n                    startAction = {\n"
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "fixes": [
+                        {
+                            "description": {
+                                "text": "Replace with the toUri extension function"
+                            },
+                            "artifactChanges": [
+                                {
+                                    "artifactLocation": {
+                                        "uriBaseId": "%SRCROOT%",
+                                        "uri": "app/src/main/java/com/sevenk/core/ui/screen/flash/FlashScreen.kt"
+                                    },
+                                    "replacements": [
+                                        {
+                                            "deletedRegion": {
+                                                "startLine": 188,
+                                                "startColumn": 46,
+                                                "charOffset": 7906,
+                                                "endLine": 188,
+                                                "endColumn": 59,
+                                                "charLength": 13
+                                            },
+                                            "insertedContent": {
+                                                "text": "it.toUri()\n"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "partialFingerprints": {
+                        "sourceContext/v1": "58bf7ada094d993b"
+                    }
+                },
+                {
+                    "ruleId": "UseKtx",
+                    "ruleIndex": 6,
+                    "message": {
+                        "text": "Use the KTX extension function String.toUri instead?",
+                        "markdown": "Use the KTX extension function `String.toUri` instead?"
+                    },
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {
+                                    "uriBaseId": "%SRCROOT%",
+                                    "uri": "app/src/main/java/com/sevenk/core/ui/screen/flash/FlashScreen.kt"
+                                },
+                                "region": {
+                                    "startLine": 361,
+                                    "startColumn": 27,
+                                    "endLine": 361,
+                                    "endColumn": 54,
+                                    "charOffset": 15235,
+                                    "charLength": 27,
+                                    "snippet": {
+                                        "text": "Uri.parse(moduleZip.zipUri)"
+                                    }
+                                },
+                                "contextRegion": {
+                                    "startLine": 359,
+                                    "endLine": 364,
+                                    "snippet": {
+                                        "text": "            runCatching {\n                flashModule(\n                    uri = Uri.parse(moduleZip.zipUri),\n                    onStdout = { line -> logText += \"$line\\n\" },\n                    onStderr = { line -> logText += \"$line\\n\" },\n"
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    "fixes": [
+                        {
+                            "description": {
+                                "text": "Replace with the toUri extension function"
+                            },
+                            "artifactChanges": [
+                                {
+                                    "artifactLocation": {
+                                        "uriBaseId": "%SRCROOT%",
+                                        "uri": "app/src/main/java/com/sevenk/core/ui/screen/flash/FlashScreen.kt"
+                                    },
+                                    "replacements": [
+                                        {
+                                            "deletedRegion": {
+                                                "startLine": 361,
+                                                "startColumn": 27,
+                                                "charOffset": 15235,
+                                                "endLine": 361,
+                                                "endColumn": 54,
+                                                "charLength": 27
+                                            },
+                                            "insertedContent": {
+                                                "text": "moduleZip.zipUri.toUri()\n"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "partialFingerprints": {
+                        "sourceContext/v1": "85dd18ca3f7457fb"
+                    }
+                }
+            ]
+        }
+    ]
+}

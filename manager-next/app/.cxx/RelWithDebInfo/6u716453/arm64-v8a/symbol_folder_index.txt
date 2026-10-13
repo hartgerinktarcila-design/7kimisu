@@ -1,0 +1,1 @@
+/Users/7kimimasy/7kimisu/manager-next/app/build/intermediates/cxx/RelWithDebInfo/6u716453/obj/arm64-v8a

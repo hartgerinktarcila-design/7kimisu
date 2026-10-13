@@ -1,0 +1,6 @@
+#!/bin/sh
+'/Users/7kimimasy/opt/android-sdk/cmake/3.22.1/bin/ninja' \
+  '-C' \
+  '/Users/7kimimasy/7kimisu/manager-next/app/.cxx/Debug/f4k6076y/x86_64' \
+  'adbroot' \
+  'sevenk'

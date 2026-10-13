@@ -1,0 +1,19 @@
+<lint-module
+    format="1"
+    dir="/Users/7kimimasy/7kimisu/manager-next/app"
+    name=":app"
+    type="APP"
+    maven="sevenk-next:app:unspecified"
+    agpVersion="9.4.1"
+    buildFolder="build"
+    bootClassPath="/Users/7kimimasy/opt/android-sdk/platforms/android-37.0/android.jar:/Users/7kimimasy/opt/android-sdk/build-tools/37.0.0/core-lambda-stubs.jar"
+    javaSourceLevel="21"
+    compileTarget="android-37.0"
+    highlightGradualR8Api="false">
+  <lintOptions
+      abortOnError="true"
+      absolutePaths="true"
+      checkReleaseBuilds="true"
+      explainIssues="true"/>
+  <variant name="debug"/>
+</lint-module>

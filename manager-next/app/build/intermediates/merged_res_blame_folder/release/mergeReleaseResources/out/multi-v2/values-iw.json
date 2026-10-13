@@ -1,0 +1,60 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.sevenk.core.app-mergeReleaseResources-43:/values-iw/values-iw.xml",
+            "map": [
+                {
+                    "source": "/Users/7kimimasy/.gradle/caches/9.7.1/transforms/da877c75d11c825957bbce046dae9926/transformed/core-1.18.0/res/values-iw/values-iw.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,149,251,348,445,546,646,752",
+                        "endColumns": "93,101,96,96,100,99,105,100",
+                        "endOffsets": "144,246,343,440,541,641,747,848"
+                    },
+                    "to": {
+                        "startLines": "4,5,6,7,8,9,10,27",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "317,411,513,610,707,808,908,2326",
+                        "endColumns": "93,101,96,96,100,99,105,100",
+                        "endOffsets": "406,508,605,702,803,903,1009,2422"
+                    }
+                },
+                {
+                    "source": "/Users/7kimimasy/.gradle/caches/9.7.1/transforms/957df928b08ae92dfa60d3189b4dd138/transformed/ui/res/values-iw/values-iw.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "107,208,297,381,474,569,652,729,814,900,979,1057,1139,1208,1292,1366,1444,1520,1594,1665",
+                        "endColumns": "100,88,83,92,94,82,76,84,85,78,77,81,68,83,73,77,75,73,70,122",
+                        "endOffsets": "203,292,376,469,564,647,724,809,895,974,1052,1134,1203,1287,1361,1439,1515,1589,1660,1783"
+                    },
+                    "to": {
+                        "startLines": "3,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,28,29,30",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "216,1014,1103,1187,1280,1375,1458,1535,1620,1706,1785,1863,1945,2014,2098,2172,2250,2427,2501,2572",
+                        "endColumns": "100,88,83,92,94,82,76,84,85,78,77,81,68,83,73,77,75,73,70,122",
+                        "endOffsets": "312,1098,1182,1275,1370,1453,1530,1615,1701,1780,1858,1940,2009,2093,2167,2245,2321,2496,2567,2690"
+                    }
+                },
+                {
+                    "source": "/Users/7kimimasy/.gradle/caches/9.7.1/transforms/7a11965e9e7dfc175f8762ce0ca5868c/transformed/foundation/res/values-iw/values-iw.xml",
+                    "from": {
+                        "startLines": "2,3,4",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "55,164,251",
+                        "endColumns": "108,86,87",
+                        "endOffsets": "159,246,334"
+                    },
+                    "to": {
+                        "startLines": "2,31,32",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "107,2695,2782",
+                        "endColumns": "108,86,87",
+                        "endOffsets": "211,2777,2865"
+                    }
+                }
+            ]
+        }
+    ]
+}

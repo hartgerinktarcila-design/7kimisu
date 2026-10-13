@@ -1,0 +1,4 @@
+/Users/7kimimasy/7kimisu/manager-next/app/.cxx/Debug/f4k6076y/arm64-v8a/CMakeFiles/sevenk.dir
+/Users/7kimimasy/7kimisu/manager-next/app/.cxx/Debug/f4k6076y/arm64-v8a/CMakeFiles/adbroot.dir
+/Users/7kimimasy/7kimisu/manager-next/app/.cxx/Debug/f4k6076y/arm64-v8a/CMakeFiles/edit_cache.dir
+/Users/7kimimasy/7kimisu/manager-next/app/.cxx/Debug/f4k6076y/arm64-v8a/CMakeFiles/rebuild_cache.dir

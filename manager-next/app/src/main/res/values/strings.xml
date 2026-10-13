@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 注意：app_name 由 build.gradle.kts 的 resValue 提供，不要在这里重复定义 -->
+
+    <!-- 通用 -->
+    <string name="home">Home</string>
+    <string name="superuser">SuperUser</string>
+    <string name="module">Module</string>
+    <string name="settings">Settings</string>
+    <string name="about">About</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="back">Back</string>
+    <string name="uninstall">Uninstall</string>
+    <string name="reboot">Reboot</string>
+    <string name="reboot_failed">Reboot failed</string>
+    <string name="reboot_to_apply">Reboot to apply</string>
+
+    <!-- Home -->
+    <string name="home_working">Working</string>
+    <string name="home_working_version">Version: %1$s</string>
+    <string name="home_not_installed">Not installed</string>
+    <string name="home_click_to_install">Tap to install</string>
+    <string name="home_unsupported">Unsupported</string>
+    <string name="home_unsupported_reason">Your kernel is not supported by 7kimisu</string>
+    <string name="home_can_install">Ready to install</string>
+    <string name="home_can_install_summary">Root is available; tap to patch and install</string>
+    <string name="home_manager_not_recognized">Kernel not ready</string>
+    <string name="home_manager_not_recognized_title">Kernel not ready</string>
+    <string name="home_manager_not_recognized_detail">The kernel has not recognized this manager yet (a reinstall changes the app UID). Reboot the device once and it will be recognized again — no need to reflash the kernel.</string>
+    <string name="home_install_kernel">Install / Update kernel</string>
+    <string name="home_install_kernel_summary">Patch init_boot/boot: pick a file to patch, or install directly</string>
+    <string name="home_manager_version">Manager version</string>
+    <string name="home_kernel">Kernel version</string>
+    <string name="home_device_model">Device model</string>
+    <string name="home_fingerprint">Fingerprint</string>
+    <string name="home_selinux_status">SELinux status</string>
+    <string name="home_seccomp_status">Seccomp status</string>
+    <string name="home_stealth_status">Stealth mode</string>
+    <string name="home_stealth_on">On</string>
+    <string name="home_stealth_off">Off</string>
+    <string name="home_stealth_unknown">Unknown</string>
+    <string name="home_uapi_version">UAPI version</string>
+    <string name="home_uapi_version_value">Kernel: %1$s · Manager: %2$d</string>
+    <string name="safe_mode">Safe mode</string>
+    <string name="jailbreak_mode">Jailbreak</string>
+    <string name="selinux_status_enforcing">Enforcing</string>
+    <string name="selinux_status_permissive">Permissive</string>
+    <string name="selinux_status_disabled">Disabled</string>
+    <string name="selinux_status_unknown">Unknown</string>
+    <string name="seccomp_status_not_supported">Not supported</string>
+    <string name="seccomp_status_disabled">Disabled</string>
+    <string name="seccomp_status_strict">Strict</string>
+    <string name="seccomp_status_filter">Filter</string>
+    <string name="seccomp_status_unknown">Unknown</string>
+
+    <!-- SuperUser -->
+    <string name="show_system_apps">Show system apps</string>
+    <string name="superuser_empty">No apps. Grant root here once the kernel is working.</string>
+
+    <!-- Module -->
+    <string name="module_install">Install module</string>
+    <string name="module_install_failed">Module installation failed</string>
+    <string name="module_empty">No modules installed</string>
+    <string name="module_version">Version</string>
+    <string name="module_author">Author</string>
+    <string name="module_uninstall_confirm">Uninstall module %1$s? It takes effect after a reboot.</string>
+    <string name="module_uninstall_success">Module %1$s will be removed after reboot</string>
+    <string name="module_uninstall_failed">Failed to uninstall module %1$s</string>
+    <string name="module_undo_uninstall">Undo uninstall</string>
+    <string name="module_failed_to_enable">Failed to enable %1$s</string>
+    <string name="module_failed_to_disable">Failed to disable %1$s</string>
+
+    <!-- Flash -->
+    <string name="flash_title">Flash / Patch boot</string>
+    <string name="flash_select_file">Select a boot image</string>
+    <string name="flash_select_file_summary">Pick a boot/init_boot image to patch</string>
+    <string name="flash_direct_install">Install directly (recommended)</string>
+    <string name="flash_direct_install_summary">Patch the current slot and flash it right away</string>
+    <string name="flash_install_inactive_slot">Install to inactive slot</string>
+    <string name="flash_install_inactive_slot_summary">Patch and flash the other slot (A/B devices)</string>
+    <string name="flash_allow_shell">Allow shell root</string>
+    <string name="flash_allow_shell_summary">--allow-shell: always allow shell (adb) to get root</string>
+    <string name="flash_enable_adb">Enable adb root</string>
+    <string name="flash_enable_adb_summary">--enable-adbd: force adbd on without auth</string>
+    <string name="flash_force_backup">Force backup</string>
+    <string name="flash_force_backup_summary">--backup: back up the source image as stock</string>
+    <string name="flash_start">Start patching</string>
+    <string name="flash_failed">Flash failed; see the log above</string>
+    <string name="flash_open_image_failed">Cannot open this boot/init_boot image (permission or format)</string>
+    <string name="flash_empty_image">The boot image is empty (copy failed)</string>
+
+    <!-- Settings -->
+    <string name="settings_theme">Theme</string>
+    <string name="settings_theme_summary">Follow system / Light / Dark</string>
+    <string name="theme_system">Follow system</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="settings_stealth">Stealth mode</string>
+    <string name="settings_stealth_summary">Disguise the UI as "not installed"; SuperUser/Module pages hidden</string>
+    <string name="settings_stealth_code">Stealth code</string>
+    <string name="settings_stealth_confirm_title">Enable stealth mode?</string>
+    <string name="settings_stealth_confirm_content">The manager will look "not installed" and root pages will be hidden.\n\nThe launcher icon stays visible.\n\nTo turn it off: dial *#*#%1$s#*#*</string>
+    <string name="settings_stealth_confirm_yes">Enable</string>
+    <string name="settings_stealth_code_too_short">The code needs at least 4 digits</string>
+    <string name="settings_stealth_toggle_failed">Operation failed; the kernel did not accept it</string>
+    <string name="settings_sulog">SU log</string>
+    <string name="settings_sulog_summary">Record su authorization requests into the kernel log</string>
+    <string name="settings_adb_root">adb root</string>
+    <string name="settings_adb_root_summary">Allow adbd to run as root (restarts adbd)</string>
+    <string name="settings_selinux_hide">Hide SELinux</string>
+    <string name="settings_selinux_hide_summary">Hide SELinux state changes from apps</string>
+    <string name="settings_selinux_hide_reboot_required">Reboot required for this change</string>
+    <string name="settings_selinux_hide_failed">Failed to apply (status %1$d)</string>
+    <string name="settings_shell_su_adb_only">Shell su via adb only</string>
+    <string name="settings_shell_su_adb_only_summary">Restrict shell (uid 2000) su to adb sessions only</string>
+    <string name="feature_status_unsupported_summary">Not supported by this kernel</string>
+    <string name="feature_status_unreadable_summary">Cannot read kernel state</string>
+    <string name="feature_status_managed_summary">Managed by the kernel</string>
+    <string name="about_summary">Version, build info and licenses</string>
+
+    <!-- About -->
+    <string name="about_uapi">Manager UAPI: %1$d</string>
+    <string name="about_source_code">Source code</string>
+    <string name="about_learn_kernelsu">Learn KernelSU</string>
+    <string name="about_license_title">Open source license</string>
+    <string name="about_license_summary">GPL-3.0 (based on KernelSU)</string>
+    <string name="about_fork_note">7kimisu is a third-party fork of KernelSU (not affiliated with the official project). KernelSU is, and always will be, free and open source.</string>
+
+    <!-- Stealth receiver (dialer secret code) -->
+    <string name="stealth_restore_not_enabled">Stealth mode is not enabled</string>
+    <string name="stealth_restore_disabled">Stealth mode disabled</string>
+    <string name="stealth_restore_foreign_kernel">The kernel is not 7kimisu (reboot, or uninstall the other root manager)</string>
+    <string name="stealth_restore_kernel_too_old">Kernel too old: stealth mode is not supported</string>
+    <string name="stealth_restore_not_recognized">This app is not recognized by the kernel right now; reboot and try again</string>
+
+    <!-- ksud -->
+    <string name="ksud_install_failed">Failed to install the kernel component (ksud); some root features may be unavailable. Reopen the app or retry from the Flash page.</string>
+
+    <!-- Natives profile flags -->
+    <string name="profile_flags_desc_no_new_privs">Disallow privilege escalation after exec</string>
+</resources>

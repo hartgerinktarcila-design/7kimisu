@@ -1,0 +1,2 @@
+ninja: Entering directory `/Users/7kimimasy/7kimisu/manager-next/app/.cxx/Debug/f4k6076y/arm64-v8a'
+ninja: no work to do.

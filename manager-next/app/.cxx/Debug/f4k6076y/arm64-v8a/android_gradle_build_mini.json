@@ -1,0 +1,33 @@
+{
+  "buildFiles": [
+    "/Users/7kimimasy/7kimisu/manager/app/src/main/cpp/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/Users/7kimimasy/opt/android-sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/Users/7kimimasy/7kimisu/manager-next/app/.cxx/Debug/f4k6076y/arm64-v8a",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/Users/7kimimasy/opt/android-sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/Users/7kimimasy/7kimisu/manager-next/app/.cxx/Debug/f4k6076y/arm64-v8a",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {
+    "sevenk::@6890427a1f51a3e7e1df": {
+      "artifactName": "sevenk",
+      "abi": "arm64-v8a",
+      "output": "/Users/7kimimasy/7kimisu/manager-next/app/build/intermediates/cxx/Debug/f4k6076y/obj/arm64-v8a/libsevenk.so",
+      "runtimeFiles": []
+    },
+    "adbroot::@6890427a1f51a3e7e1df": {
+      "artifactName": "adbroot",
+      "abi": "arm64-v8a",
+      "output": "/Users/7kimimasy/7kimisu/manager-next/app/build/intermediates/cxx/Debug/f4k6076y/obj/arm64-v8a/libadbroot.so",
+      "runtimeFiles": []
+    }
+  }
+}

@@ -1,0 +1,2 @@
+ninja: Entering directory `/Users/7kimimasy/7kimisu/manager-next/app/.cxx/RelWithDebInfo/6u716453/x86_64'
+ninja: no work to do.

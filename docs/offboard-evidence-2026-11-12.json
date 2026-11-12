@@ -1,0 +1,33 @@
+{
+  "date": "2026-11-12",
+  "active_source": "/Users/7kimimasy/7kimisu-local-builds/v2.34.4-kpm-update/source",
+  "artifacts": [
+    {
+      "path": "/Users/7kimimasy/Downloads/7kimisu_v2.34.4-MilkSU-KPM-update-arm64-signed.apk",
+      "sha256": "f59b0cf1cf050d9a47c90a42f0fdff43fd2f4b1cb7f115eb47a284f641b78ca1",
+      "zip_crc_ok": true
+    },
+    {
+      "path": "/Users/7kimimasy/Downloads/7kimisu-v2.34.4-MilkSU-KPM更新版.zip",
+      "sha256": "d18ec9d7376dd1547e8070adf8cad50a02e2bd73a200c4b654d7b11de7e950a0",
+      "zip_crc_ok": true
+    }
+  ],
+  "last_verified_install": {
+    "version": "2.34.4",
+    "versionCode": 2340040,
+    "adb_result": "Success",
+    "date": "2026-11-10",
+    "new_device_check_this_offboard": false
+  },
+  "live_kpm_update_performed_by_agent": false,
+  "reboot_performed_by_agent": false,
+  "remaining": "Read current device status first; verify KPM update/reboot outcome only when requested.",
+  "offboarding_file_present": false,
+  "deployment": "No deployment or device action during offboard",
+  "secrets_changed": false,
+  "external_memory": "No project-bound memory connector found; durable local handoff used",
+  "cbm": "No project integration found",
+  "obsidian": "Optional; no configured vault/skill; skipped",
+  "git_scope": "Only new offboard Markdown and JSON; existing source changes excluded"
+}
